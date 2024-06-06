@@ -1,0 +1,153 @@
+[versions]
+agp = "8.4.1"
+kotlin = "2.0.0"
+coreKtx = "1.10.1"
+junit = "4.13.2"
+junitVersion = "1.1.5"
+espressoCore = "3.5.1"
+lifecycleRuntimeKtx = "2.6.1"
+activityCompose = "1.8.0"
+composeBom = "2023.08.00"
+appcompat = "1.6.1"
+material = "1.12.0"
+jetbrainsKotlinJvm = "1.9.0"
+spotless = "6.25.0"
+detekt = "1.23.6"
+navigation = "2.7.7"
+testLogger = "3.2.0"
+androidJUnit5 = "1.10.0.0"
+kotlinSymbolProcessing = "2.0.0-1.0.21"
+
+kotlinCompilerExtensionVersion = "1.5.4"
+
+compileSdk = "34"
+targetSdk = "34"
+minSdk = "26"
+
+compose-plugin = "1.6.20-dev1646"
+
+coroutines = "1.8.1"
+retrofit = "2.11.0"
+okhttp = "4.12.0"
+koin = "3.5.6"
+coil = "2.6.0"
+lifecycle = "2.7.0"
+room = "2.6.1"
+serializationJson = "1.6.3"
+kotlinxSerializationConverter = "1.0.0"
+viewBindingPropertyDelegate = "1.5.9"
+timber = "5.0.1"
+constraintLayout = "2.1.4"
+appCompat = "1.6.1"
+recyclerView = "1.3.2"
+compose = "1.6.7"
+materialCompose = "1.2.1"
+lottie = "6.4.1"
+playCore = "1.10.3"
+fragmentKtx = "1.7.1"
+# Info https://google.github.io/accompanist/flowlayout/
+# Repo https://oss.sonatype.org/content/repositories/snapshots/com/google/accompanist/accompanist-flowlayout/
+accompanistFlowLayout = "0.32.0"
+
+kluent = "1.73"
+testRunner = "1.5.2"
+mockk = "1.13.11"
+espresso = "3.5.1"
+coreTesting = "2.2.0"
+uiTooling = "1.6.7"
+
+[libraries]
+androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
+androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
+
+androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
+androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
+androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
+androidx-ui = { group = "androidx.compose.ui", name = "ui" }
+androidx-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
+androidx-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
+androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
+androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
+androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
+androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
+androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+material = { group = "com.google.android.material", name = "material", version.ref = "material" }
+
+navigationFragment = { module = "androidx.navigation:navigation-fragment-ktx", version.ref = "navigation" }
+navigationUiKtx = { module = "androidx.navigation:navigation-ui-ktx", version.ref = "navigation" }
+
+kotlin = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
+coroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutines" }
+retrofitCore = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
+kotlinxSerializationConverter = { module = "com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter", version.ref = "kotlinxSerializationConverter" }
+serializationJson = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serializationJson" }
+okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
+okhttpInterceptor = { module = "com.squareup.okhttp3:logging-interceptor", version.ref = "okhttp" }
+koin = { module = "io.insert-koin:koin-android", version.ref = "koin" }
+koinNavigation = { module = "io.insert-koin:koin-androidx-navigation", version.ref = "koin" }
+viewBindingPropertyDelegate = { module = "com.github.kirich1409:viewbindingpropertydelegate", version.ref = "viewBindingPropertyDelegate" }
+timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
+constraintLayout = { module = "androidx.constraintlayout:constraintlayout", version.ref = "constraintLayout" }
+appCompat = { module = "androidx.appcompat:appcompat", version.ref = "appCompat" }
+recyclerView = { module = "androidx.recyclerview:recyclerview", version.ref = "recyclerView" }
+composeMaterial = { module = "androidx.compose.material3:material3", version.ref = "materialCompose" }
+lottie = { module = "com.airbnb.android:lottie-compose", version.ref = "lottie" }
+coil = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
+playCore = { module = "com.google.android.play:core", version.ref = "playCore" }
+coreKtx = { module = "androidx.core:core-ktx", version.ref = "coreKtx" }
+fragmentKtx = { module = "androidx.fragment:fragment-ktx", version.ref = "fragmentKtx" }
+viewmodelKtx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "lifecycle" }
+livedataKtx = { module = "androidx.lifecycle:lifecycle-livedata-ktx", version.ref = "lifecycle" }
+composeUI = { module = "androidx.compose.ui:ui", version.ref = "compose" }
+toolingPreview = { module = "androidx.compose.ui:ui-tooling-preview", version.ref = "compose" }
+livedataRuntime = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycle" }
+roomKtx = { module = "androidx.room:room-ktx", version.ref = "room" }
+roomRuntime = { module = "androidx.room:room-runtime", version.ref = "room" }
+roomCompiler = { module = "androidx.room:room-compiler", version.ref = "room" }
+accompanistFlowLayout = { module = "com.google.accompanist:accompanist-flowlayout", version.ref = "accompanistFlowLayout" }
+detektFormatting = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt" }
+konsist = "com.lemonappdev:konsist:0.11.0"
+
+# Test dependencies
+junit = { module = "junit:junit", version.ref = "junit" }
+testCoroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
+kluent = { module = "org.amshove.kluent:kluent-android", version.ref = "kluent" }
+testRunner = { module = "androidx.test:runner", version.ref = "testRunner" }
+espresso = { module = "androidx.test.espresso:espresso-core", version.ref = "espresso" }
+mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
+coreTesting = { module = "androidx.arch.core:core-testing", version.ref = "coreTesting" }
+junitJupiterApi = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit" }
+junitJupiterEngine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit" }
+uiTooling = { group = "androidx.compose.ui", name = "ui-tooling", version.ref = "uiTooling" }
+
+
+[bundles]
+retrofit = ["retrofitCore", "kotlinxSerializationConverter", "serializationJson", "okhttp", "okhttpInterceptor"]
+koin = ["koin", "koinNavigation"]
+compose = ["composeUI", "toolingPreview", "coil"]
+lifecycle = ["viewmodelKtx", "livedataKtx", "livedataRuntime"]
+navigation = ["navigationFragment", "navigationUiKtx"]
+room = ["roomKtx", "roomRuntime"]
+test = ["testCoroutines", "kluent", "testRunner", "espresso", "mockk", "coreTesting", "junitJupiterApi",
+    "junitJupiterEngine", "konsist"]
+
+[plugins]
+android-application = { id = "com.android.application", version.ref = "agp" }
+jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+android-dynamic-feature = { id = "com.android.dynamic-feature", version.ref = "agp" }
+android-library = { id = "com.android.library", version.ref = "agp" }
+jetbrains-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "jetbrainsKotlinJvm" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+kotlin-symbolProcessing = { id = "com.google.devtools.ksp", version.ref = "kotlinSymbolProcessing" }
+detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
+spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
+safeArgs = { id = "androidx.navigation.safeargs.kotlin", version.ref = "navigation" }
+junit5Android = { id = "de.mannodermaus.android-junit5", version.ref = "androidJUnit5" }
+testLogger = { id = "com.adarshr.test-logger", version.ref = "testLogger" }
+compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+jetbrainsCompose = { id = "org.jetbrains.compose", version.ref = "compose-plugin" }
+
+
+

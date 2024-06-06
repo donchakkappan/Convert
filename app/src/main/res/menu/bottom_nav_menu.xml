@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/nav_graph_currencies"
+        android:icon="@drawable/ic_currency"
+        android:title="@string/currency" />
+    <item
+        android:id="@+id/nav_graph_emi"
+        android:icon="@drawable/ic_emi"
+        android:title="@string/emi" />
+    <item
+        android:id="@+id/nav_graph_units"
+        android:icon="@drawable/ic_units"
+        android:title="@string/units" />
+</menu>

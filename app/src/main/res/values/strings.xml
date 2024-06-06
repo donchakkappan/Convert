@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">Convert</string>
+    <string name="title_feature_currency">Currency Converter</string>
+    <string name="title_feature_units">Unit Converter</string>
+    <string name="title_feature_emi">EMI Calculator</string>
+    <string name="title_feature_media">Media Converter</string>
+    <string name="title_feature_documents">Document Converter</string>
+    <string name="title_feature_scanner">Scanner</string>
+
+    <!--Bottom menu-->
+    <string name="currency">Currency</string>
+    <string name="emi">Emi</string>
+    <string name="units">Units</string>
+    <string name="search">search</string>
+</resources>
