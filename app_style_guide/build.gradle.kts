@@ -11,6 +11,8 @@ dependencies {
     api(libs.material)
     api(libs.composeMaterial)
 
+    debugImplementation(libs.uiTooling)
+    
     api(libs.lottie)
 
     implementation(libs.androidx.core.ktx)
