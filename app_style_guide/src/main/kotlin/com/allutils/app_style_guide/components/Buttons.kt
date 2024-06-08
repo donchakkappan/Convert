@@ -16,74 +16,80 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.allutils.app_style_guide.styles.actionM
 import com.allutils.app_style_guide.theme.ConvertTheme
 
 @Composable
-fun SolidButton(text: String, onClick: () -> Unit) {
+fun PrimaryButton(text: String, onClick: () -> Unit) {
     Button(
         onClick = onClick,
         modifier = Modifier.padding(8.dp),
         shape = RoundedCornerShape(12.dp)
     ) {
-        Text(text = text)
+        Text(text = text, style = actionM)
     }
 }
 
 @Composable
-fun OutlineButton(text: String, onClick: () -> Unit) {
-    OutlinedButton(onClick = onClick, modifier = Modifier.padding(8.dp)) {
-        Text(text = text)
+fun SecondaryButton(text: String, onClick: () -> Unit) {
+    OutlinedButton(
+        onClick = onClick,
+        modifier = Modifier.padding(8.dp),
+        shape = RoundedCornerShape(12.dp)
+    ) {
+        Text(text = text, style = actionM)
     }
 }
 
 @Composable
-fun TextButton(text: String, onClick: () -> Unit) {
+fun TertiaryButton(text: String, onClick: () -> Unit) {
     androidx.compose.material3.TextButton(onClick = onClick, modifier = Modifier.padding(8.dp)) {
-        Text(text = text)
+        Text(text = text, style = actionM)
     }
 }
 
 @Composable
 fun IconButton(text: String, icon: ImageVector, onClick: () -> Unit) {
-    Button(onClick = onClick, modifier = Modifier.padding(8.dp)) {
+    Button(
+        onClick = onClick,
+        modifier = Modifier.padding(8.dp),
+        shape = RoundedCornerShape(12.dp)
+    ) {
         Row {
             Icon(
                 imageVector = icon,
                 contentDescription = null,
                 modifier = Modifier.padding(end = 4.dp)
             )
-            Text(text = text)
+            Text(text = text, style = actionM)
         }
     }
 }
 
 @Composable
-fun RoundedButton(text: String, onClick: () -> Unit) {
-    Button(onClick = onClick, modifier = Modifier.padding(8.dp)) {
-        Text(text = text)
-    }
-}
-
-@Composable
 fun DisabledButton(text: String, onClick: () -> Unit) {
-    Button(onClick = onClick, modifier = Modifier.padding(8.dp), enabled = false) {
-        Text(text = text)
+    Button(
+        onClick = onClick,
+        modifier = Modifier.padding(8.dp),
+        shape = RoundedCornerShape(12.dp),
+        enabled = false
+    ) {
+        Text(text = text, style = actionM)
     }
 }
 
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_NO, showBackground = true, name = "Light mode")
 @Composable
-fun Preview_1() {
+private fun Preview_1() {
     ConvertTheme {
         Column {
             Row {
-                SolidButton("Solid Button") {}
-                OutlineButton("Outlined") {}
-                TextButton("Text Button") {}
+                PrimaryButton("Solid Button") {}
+                SecondaryButton("Outlined") {}
+                TertiaryButton("Text Button") {}
             }
             Row {
                 IconButton("Icon", Icons.Default.FavoriteBorder) {}
-                RoundedButton("Rounded") {}
                 DisabledButton("Disabled") {}
             }
         }
@@ -92,17 +98,16 @@ fun Preview_1() {
 
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES, showBackground = true, name = "Dark mode")
 @Composable
-fun Preview_2() {
+private fun Preview_2() {
     ConvertTheme {
         Column {
             Row {
-                SolidButton("Solid Button") {}
-                OutlineButton("Outlined") {}
-                TextButton("Text Button") {}
+                PrimaryButton("Solid Button") {}
+                SecondaryButton("Outlined") {}
+                TertiaryButton("Text Button") {}
             }
             Row {
                 IconButton("Icon", Icons.Default.FavoriteBorder) {}
-                RoundedButton("Rounded") {}
                 DisabledButton("Disabled") {}
             }
         }

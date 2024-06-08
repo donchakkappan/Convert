@@ -1,4 +1,4 @@
-package com.allutils.app_style_guide.components
+package com.allutils.app_style_guide.templates
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize

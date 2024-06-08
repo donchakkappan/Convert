@@ -1,13 +1,11 @@
 package com.allutils.feature_currency.presentation.composables
 
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.allutils.base.presentation.composable.DataNotFoundAnim
 import com.allutils.base.presentation.composable.ProgressIndicator
@@ -33,11 +31,11 @@ internal fun ConversionListScreen(
     viewModel: CurrencyListViewModel? = null
 ) {
     LazyColumn(
-        Modifier.fillMaxWidth(),
-        contentPadding = PaddingValues(16.dp)
+        Modifier.fillMaxWidth()
     ) {
         items(items = conversionRates, key = { it.currencyCode }) { currency ->
-            RowCurrencyDetails(
+            CurrencyListItem(
+                "USD",
                 currency.currencyCode,
                 currency.rate.toString(),
                 "https://flagsapi.com/" + currency.currencyCode.take(2) + "/shiny/64.png"

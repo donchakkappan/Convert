@@ -6,25 +6,33 @@ import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import com.allutils.app_style_guide.styles.darkGrey
+import com.allutils.app_style_guide.styles.darkestBlack
+import com.allutils.app_style_guide.styles.darkestBlue
+import com.allutils.app_style_guide.styles.darkestGrey
+import com.allutils.app_style_guide.styles.lightGrey
+import com.allutils.app_style_guide.styles.lightestGrey
 
 val LightColorScheme = lightColorScheme(
-    primary = Color(0xFFADD8E6), // Light Blue
-    onPrimary = Color.Black,
+    primary = darkestBlue,
+    onPrimary = lightestGrey,
     secondary = Color.White,
     onSecondary = Color.Black,
     surface = Color.White,
+    outline = darkestBlue,
     onSurface = Color.Black,
-    background = Color(0xFFF5F5F5) // Light Gray
+    background = lightGrey
 )
 
 val DarkColorScheme = darkColorScheme(
-    primary = Color(0xFF006400), // Dark Green
+    primary = darkestBlack,
     onPrimary = Color.White,
-    secondary = Color(0xFF32CD32), // Light Green
+    secondary = lightGrey,
     onSecondary = Color.Black,
-    surface = Color(0xFF333333), // Dark Gray
-    onSurface = Color.White,
-    background = Color(0xFF121212) // Very Dark Gray
+    outline = darkestBlack,
+    surface = darkGrey,
+    onSurface = lightestGrey,
+    background = darkestGrey
 )
 
 @Composable

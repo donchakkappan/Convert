@@ -56,13 +56,13 @@ val bodyM = TextStyle(
 val bodyS = TextStyle(
     fontFamily = FontFamily.Default,
     fontWeight = FontWeight.Normal,
-    fontSize = 16.sp
+    fontSize = 12.sp
 )
 
 val bodyXS = TextStyle(
     fontFamily = FontFamily.Default,
     fontWeight = FontWeight.Medium,
-    fontSize = 12.sp
+    fontSize = 10.sp
 )
 
 val actionL = TextStyle(

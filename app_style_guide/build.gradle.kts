@@ -11,6 +11,11 @@ dependencies {
     api(libs.material)
     api(libs.composeMaterial)
 
+    api(libs.bundles.compose)
+
+    api(libs.constraintLayout)
+    api(libs.composeConstraintLayout)
+
     debugImplementation(libs.uiTooling)
     
     api(libs.lottie)
