@@ -3,6 +3,7 @@ package com.allutils.app_style_guide.components
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -20,10 +21,10 @@ import com.allutils.app_style_guide.styles.actionM
 import com.allutils.app_style_guide.theme.ConvertTheme
 
 @Composable
-fun PrimaryButton(text: String, onClick: () -> Unit) {
+fun PrimaryButton(text: String, modifier: Modifier = Modifier, onClick: () -> Unit) {
     Button(
         onClick = onClick,
-        modifier = Modifier.padding(8.dp),
+        modifier = modifier.padding(8.dp).defaultMinSize(150.dp, 50.dp),
         shape = RoundedCornerShape(12.dp)
     ) {
         Text(text = text, style = actionM)
@@ -31,10 +32,10 @@ fun PrimaryButton(text: String, onClick: () -> Unit) {
 }
 
 @Composable
-fun SecondaryButton(text: String, onClick: () -> Unit) {
+fun SecondaryButton(text: String, modifier: Modifier = Modifier, onClick: () -> Unit) {
     OutlinedButton(
         onClick = onClick,
-        modifier = Modifier.padding(8.dp),
+        modifier = modifier.padding(8.dp),
         shape = RoundedCornerShape(12.dp)
     ) {
         Text(text = text, style = actionM)
@@ -42,17 +43,22 @@ fun SecondaryButton(text: String, onClick: () -> Unit) {
 }
 
 @Composable
-fun TertiaryButton(text: String, onClick: () -> Unit) {
-    androidx.compose.material3.TextButton(onClick = onClick, modifier = Modifier.padding(8.dp)) {
+fun TertiaryButton(text: String, modifier: Modifier = Modifier, onClick: () -> Unit) {
+    androidx.compose.material3.TextButton(onClick = onClick, modifier = modifier.padding(8.dp)) {
         Text(text = text, style = actionM)
     }
 }
 
 @Composable
-fun IconButton(text: String, icon: ImageVector, onClick: () -> Unit) {
+fun IconButton(
+    text: String,
+    icon: ImageVector,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit
+) {
     Button(
         onClick = onClick,
-        modifier = Modifier.padding(8.dp),
+        modifier = modifier.padding(8.dp),
         shape = RoundedCornerShape(12.dp)
     ) {
         Row {
@@ -67,10 +73,10 @@ fun IconButton(text: String, icon: ImageVector, onClick: () -> Unit) {
 }
 
 @Composable
-fun DisabledButton(text: String, onClick: () -> Unit) {
+fun DisabledButton(text: String, modifier: Modifier = Modifier, onClick: () -> Unit) {
     Button(
         onClick = onClick,
-        modifier = Modifier.padding(8.dp),
+        modifier = modifier.padding(8.dp),
         shape = RoundedCornerShape(12.dp),
         enabled = false
     ) {

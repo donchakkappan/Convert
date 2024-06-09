@@ -23,7 +23,7 @@ class NavHostActivity : BaseActivity(R.layout.activity_nav_host),
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        initAppBar()
+        //initAppBar()
         initNavManager()
         initBottomNavigation()
     }

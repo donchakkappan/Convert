@@ -1,10 +1,11 @@
 package com.allutils.app_style_guide.components
 
 import android.content.res.Configuration
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -14,24 +15,37 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.allutils.app_style_guide.styles.bodyS
+import com.allutils.app_style_guide.styles.bodyM
+import com.allutils.app_style_guide.styles.lightestGrey
 import com.allutils.app_style_guide.theme.ConvertTheme
 
 @Composable
-fun NumberField(label: String, placeholder: String) {
+fun NumberField(placeholder: String, modifier: Modifier = Modifier) {
     var numberText by remember { mutableStateOf(TextFieldValue("")) }
     OutlinedTextField(value = numberText,
-        modifier = Modifier
-            .padding(8.dp)
-            .fillMaxWidth(),
+        modifier = modifier
+            .background(Color.Transparent)
+            .fillMaxWidth().clip(RoundedCornerShape(12.dp)),
         shape = RoundedCornerShape(12.dp),
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-        label = { Text(text = label) },
-        placeholder = { Text(text = placeholder, style = bodyS) },
+        maxLines = 1,
+        textStyle = bodyM.copy(color = lightestGrey),
+        keyboardOptions = KeyboardOptions(
+            keyboardType = KeyboardType.Number,
+            imeAction = ImeAction.Done
+        ),
+        keyboardActions = KeyboardActions(
+            onDone = {
+
+            }
+        ),
+        placeholder = { Text(text = placeholder, style = bodyM.copy(color = lightestGrey)) },
         onValueChange = {
             numberText = it
         }
@@ -43,7 +57,7 @@ fun NumberField(label: String, placeholder: String) {
 private fun Preview_1() {
     ConvertTheme {
         Column {
-            NumberField("Number", "Enter a number")
+            NumberField("Enter a number")
         }
     }
 }
@@ -53,7 +67,7 @@ private fun Preview_1() {
 private fun Preview_2() {
     ConvertTheme {
         Column {
-            NumberField("Number", "Enter a number")
+            NumberField("Enter a number")
         }
     }
 }

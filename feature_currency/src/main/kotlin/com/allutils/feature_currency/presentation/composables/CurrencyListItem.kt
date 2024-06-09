@@ -29,6 +29,7 @@ fun CurrencyListItem(
     currencyCode: String,
     rate: String,
     countryFlag: String,
+    amount: Int
 ) {
 
     ConstraintLayout(
@@ -73,7 +74,7 @@ fun CurrencyListItem(
             }
         )
         Text(
-            text = rate,
+            text = (rate.toDouble() * amount).toString(),
             style = headingH4,
             color = darkestBlack,
             modifier = Modifier.constrainAs(source) {
@@ -90,7 +91,7 @@ fun CurrencyListItem(
 private fun Preview_1() {
     ConvertTheme {
         Column {
-            CurrencyListItem("INR", "USD", "80", "https://flagsapi.com/BE/shiny/64.png")
+            CurrencyListItem("INR", "USD", "80", "https://flagsapi.com/BE/shiny/64.png",1)
         }
     }
 }
@@ -100,7 +101,7 @@ private fun Preview_1() {
 private fun Preview_2() {
     ConvertTheme {
         Column {
-            CurrencyListItem("USD", "INR", "80", "https://flagsapi.com/BE/shiny/64.png")
+            CurrencyListItem("USD", "INR", "80", "https://flagsapi.com/BE/shiny/64.png",1)
         }
     }
 }

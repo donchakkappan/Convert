@@ -19,6 +19,8 @@ internal class CurrencyListViewModel(
     private val getConversionRatesUseCase: GetConversionRates,
 ) : BaseViewModel<CurrencyListViewModel.UiState, CurrencyListViewModel.Action>(UiState.Loading) {
 
+    var amount =0
+
     companion object {
         const val DEFAULT_QUERY_NAME = "USD"
         private const val SAVED_QUERY_KEY = "query"
@@ -32,7 +34,7 @@ internal class CurrencyListViewModel(
 
     private var job: Job? = null
 
-    private fun getConversionRates(query: String) {
+    fun getConversionRates(query: String) {
         if (job != null) {
             job?.cancel()
             job = null
