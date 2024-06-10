@@ -1,4 +1,4 @@
-package com.allutils.feature_currency.presentation.composables
+package com.allutils.feature_currency.presentation.conversion
 
 import android.content.res.Configuration
 import androidx.compose.foundation.background
@@ -22,6 +22,8 @@ import com.allutils.app_style_guide.styles.headingH4
 import com.allutils.app_style_guide.styles.lightBlack
 import com.allutils.app_style_guide.templates.PlaceholderImage
 import com.allutils.app_style_guide.theme.ConvertTheme
+import java.math.BigDecimal
+import java.math.RoundingMode
 
 @Composable
 fun CurrencyListItem(
@@ -29,7 +31,7 @@ fun CurrencyListItem(
     currencyCode: String,
     rate: String,
     countryFlag: String,
-    amount: Int
+    amount: Double
 ) {
 
     ConstraintLayout(
@@ -39,7 +41,7 @@ fun CurrencyListItem(
             .clickable { }
             .padding(horizontal = 12.dp, vertical = 12.dp)
     ) {
-        val (image, title, subtitle, source, starButton, time) = createRefs()
+        val (flag, code, description, convertedRate) = createRefs()
 
         PlaceholderImage(
             url = countryFlag,
@@ -47,8 +49,8 @@ fun CurrencyListItem(
             contentDescription = rate,
             modifier = Modifier
                 .size(64.dp)
-                .constrainAs(image) {
-                    linkTo(start = parent.start, end = title.start)
+                .constrainAs(flag) {
+                    linkTo(start = parent.start, end = code.start)
                     top.linkTo(parent.top)
                     bottom.linkTo(parent.bottom)
                 }
@@ -57,27 +59,31 @@ fun CurrencyListItem(
             text = currencyCode,
             style = headingH4,
             color = darkestBlack,
-            modifier = Modifier.constrainAs(title) {
-                start.linkTo(image.end, 16.dp)
-                top.linkTo(image.top, 6.dp)
+            modifier = Modifier.constrainAs(code) {
+                start.linkTo(flag.end, 16.dp)
+                top.linkTo(flag.top, 6.dp)
                 width = Dimension.fillToConstraints
             }
         )
+        val formattedRate =
+            BigDecimal(rate.toDouble()).setScale(2, RoundingMode.HALF_EVEN).toString()
         Text(
-            text = "1 $baseCode = $rate $currencyCode",
+            text = "1 $baseCode = $formattedRate $currencyCode",
             style = bodyS,
             color = lightBlack,
-            modifier = Modifier.constrainAs(subtitle) {
-                start.linkTo(image.end, 16.dp)
-                top.linkTo(title.bottom, 8.dp)
+            modifier = Modifier.constrainAs(description) {
+                start.linkTo(flag.end, 16.dp)
+                top.linkTo(code.bottom, 8.dp)
                 width = Dimension.fillToConstraints
             }
         )
+        val formattedNumber =
+            BigDecimal(rate.toDouble() * amount).setScale(2, RoundingMode.HALF_EVEN).toString()
         Text(
-            text = (rate.toDouble() * amount).toString(),
+            text = formattedNumber,
             style = headingH4,
             color = darkestBlack,
-            modifier = Modifier.constrainAs(source) {
+            modifier = Modifier.constrainAs(convertedRate) {
                 end.linkTo(parent.end, margin = 8.dp)
                 top.linkTo(parent.top)
                 bottom.linkTo(parent.bottom)
@@ -91,7 +97,7 @@ fun CurrencyListItem(
 private fun Preview_1() {
     ConvertTheme {
         Column {
-            CurrencyListItem("INR", "USD", "80", "https://flagsapi.com/BE/shiny/64.png",1)
+            CurrencyListItem("INR", "USD", "80", "https://flagsapi.com/BE/shiny/64.png", 1.0)
         }
     }
 }
@@ -101,7 +107,7 @@ private fun Preview_1() {
 private fun Preview_2() {
     ConvertTheme {
         Column {
-            CurrencyListItem("USD", "INR", "80", "https://flagsapi.com/BE/shiny/64.png",1)
+            CurrencyListItem("USD", "INR", "80", "https://flagsapi.com/BE/shiny/64.png", 1.0)
         }
     }
 }

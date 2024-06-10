@@ -21,7 +21,8 @@ internal class CurrenciesRepositoryImpl(
     override suspend fun getConversionRates(
         baseCode: String
     ): Result<List<ConversionRatesOutput>> =
-        when (val networkResponse = networkService.getConversionRates(BuildConfig.GRADLE_CURRENCY_API_KEY, baseCode)) {
+        when (val networkResponse =
+            networkService.getConversionRates(BuildConfig.GRADLE_CURRENCY_API_KEY, baseCode)) {
             is ApiResult.Success -> {
                 val conversionRates = networkResponse
                     .data

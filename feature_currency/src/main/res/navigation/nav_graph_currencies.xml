@@ -6,7 +6,7 @@
 
     <fragment
         android:id="@+id/currencyListFragment"
-        android:name="com.allutils.feature_currency.presentation.CurrencyListFragment"
+        android:name="com.allutils.feature_currency.presentation.ConversionListFragment"
         android:label="CurrencyListFragment" />
 
 </navigation>

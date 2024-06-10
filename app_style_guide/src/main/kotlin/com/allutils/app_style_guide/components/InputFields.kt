@@ -17,6 +17,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
@@ -27,8 +28,9 @@ import com.allutils.app_style_guide.styles.lightestGrey
 import com.allutils.app_style_guide.theme.ConvertTheme
 
 @Composable
-fun NumberField(placeholder: String, modifier: Modifier = Modifier) {
+fun NumberField(placeholder: String, modifier: Modifier = Modifier,onDone: (String) -> Unit) {
     var numberText by remember { mutableStateOf(TextFieldValue("")) }
+    val keyboardController = LocalSoftwareKeyboardController.current
     OutlinedTextField(value = numberText,
         modifier = modifier
             .background(Color.Transparent)
@@ -42,7 +44,8 @@ fun NumberField(placeholder: String, modifier: Modifier = Modifier) {
         ),
         keyboardActions = KeyboardActions(
             onDone = {
-
+                onDone(numberText.text)
+                keyboardController?.hide()
             }
         ),
         placeholder = { Text(text = placeholder, style = bodyM.copy(color = lightestGrey)) },
@@ -57,7 +60,7 @@ fun NumberField(placeholder: String, modifier: Modifier = Modifier) {
 private fun Preview_1() {
     ConvertTheme {
         Column {
-            NumberField("Enter a number")
+            NumberField("Enter a number"){}
         }
     }
 }
@@ -67,7 +70,7 @@ private fun Preview_1() {
 private fun Preview_2() {
     ConvertTheme {
         Column {
-            NumberField("Enter a number")
+            NumberField("Enter a number"){}
         }
     }
 }
