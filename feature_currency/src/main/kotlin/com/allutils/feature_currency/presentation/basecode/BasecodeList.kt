@@ -48,11 +48,8 @@ internal fun BasecodeList(
     ) {
         items(items = conversionRates, key = { it.currencyCode }) { currency ->
             BasecodeListItem(
-                "USD",
                 currency.currencyCode,
-                currency.rate.toString(),
-                "https://flagsapi.com/" + currency.currencyCode.take(2) + "/shiny/64.png",
-                viewModel?.amount ?: 1.0
+                "https://flagsapi.com/" + currency.currencyCode.take(2) + "/shiny/64.png"
             ) {
                 viewModel?.baseCode = it
                 viewModel?.getConversionRates()

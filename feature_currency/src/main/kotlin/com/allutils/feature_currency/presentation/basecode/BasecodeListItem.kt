@@ -24,7 +24,7 @@ import com.allutils.app_style_guide.theme.ConvertTheme
 @Composable
 fun BasecodeListItem(
     currencyCode: String,
-    rate: String,
+    countryFlag: String,
     onItemClick: (String) -> Unit
 ) {
 
@@ -38,9 +38,9 @@ fun BasecodeListItem(
         val (flag, code) = createRefs()
 
         PlaceholderImage(
-            url = flag,
+            url = countryFlag,
             color = Color.Transparent,
-            contentDescription = rate,
+            contentDescription = countryFlag,
             modifier = Modifier
                 .size(64.dp)
                 .constrainAs(flag) {

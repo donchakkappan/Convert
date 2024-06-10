@@ -1,8 +1,9 @@
 package com.allutils.convert
 
 import android.app.Application
-import com.allutils.base.BuildConfig
+import android.os.StrictMode
 import com.allutils.base.baseModule
+import com.allutils.convert.BuildConfig.DEBUG
 import com.allutils.feature_currency.currencyModules
 import com.allutils.feature_documents.documentsModules
 import com.allutils.feature_emi.emiModules
@@ -17,6 +18,7 @@ import timber.log.Timber
 class ConvertApplication : Application() {
 
     override fun onCreate() {
+        enableStrictMode()
         super.onCreate()
 
         initKoin()
@@ -40,8 +42,28 @@ class ConvertApplication : Application() {
     }
 
     private fun initTimber() {
-        if (BuildConfig.DEBUG) {
+        if (DEBUG) {
             Timber.plant(Timber.DebugTree())
+        }
+    }
+
+    private fun enableStrictMode() {
+        if (DEBUG) {
+            StrictMode.setThreadPolicy(
+                StrictMode.ThreadPolicy.Builder()
+                    .detectDiskReads()
+                    .detectDiskWrites()
+                    .detectNetwork()
+                    .penaltyLog()
+                    .build()
+            )
+            StrictMode.setVmPolicy(
+                StrictMode.VmPolicy.Builder()
+                    .detectLeakedSqlLiteObjects()
+                    .detectLeakedClosableObjects()
+                    .penaltyLog()
+                    .build()
+            )
         }
     }
 }
