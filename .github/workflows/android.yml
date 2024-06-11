@@ -19,6 +19,8 @@ jobs:
           java-version: 17
           distribution: 'zulu'
 
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
       - name: Build App
         run: ./gradlew :app:assembleDebug --no-build-cache
 
@@ -39,6 +41,8 @@ jobs:
           java-version: 17
           distribution: 'zulu'
 
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
       - name: lintDebug
         run: ./gradlew lint
 
