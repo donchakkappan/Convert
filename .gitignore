@@ -23,7 +23,7 @@ build/
 local.properties
 **/build/
 !**/src/**/build/
-.gradle/
+
 # Ignore Gradle GUI config
 gradle-app.setting
 
@@ -97,7 +97,7 @@ ehthumbs.db
 .mtj.tmp/
 
 # Package Files
-*.jar
+#*.jar
 *.war
 *.ear
 
@@ -111,7 +111,7 @@ hs_err_pid*
 **/build/
 
 # Bundled static libraries
-**/*.jar
+#**/*.jar
 
 # Google Android Studio files
 .idea/
