@@ -21,8 +21,8 @@ dependencies {
 
     ksp(libs.roomCompiler)
 
-    implementation(libs.androidx.core.ktx)
-    testImplementation(libs.junit)
+    testImplementation(libs.bundles.test)
+    testRuntimeOnly(libs.junitJupiterEngine)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 }

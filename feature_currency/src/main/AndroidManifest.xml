@@ -4,7 +4,7 @@
 
     <dist:module
         dist:instant="false"
-        dist:title="@string/title_feature_currency">
+        dist:title="@string/conversion_rates">
         <dist:delivery>
             <dist:on-demand />
         </dist:delivery>
