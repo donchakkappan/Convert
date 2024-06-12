@@ -13,6 +13,8 @@ dependencies {
     implementation(plugin(libs.plugins.detekt))
     implementation(plugin(libs.plugins.junit5Android))
     implementation(plugin(libs.plugins.safeArgs))
+    implementation(plugin(libs.plugins.firebase))
+    implementation(plugin(libs.plugins.crashlytics))
 
     implementation(plugin(libs.plugins.android.application))
     implementation(plugin(libs.plugins.jetbrains.kotlin.android))

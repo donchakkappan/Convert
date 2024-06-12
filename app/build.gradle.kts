@@ -38,6 +38,10 @@ android {
                 "proguard-rules.pro"
             )
         }
+        getByName("debug") {
+            applicationIdSuffix = ".dev"
+            versionNameSuffix = "-dev"
+        }
     }
 
     buildFeatures {
@@ -85,6 +89,9 @@ dependencies {
     implementation(projects.featureDocuments)
     implementation(projects.featureScanner)
 
+    implementation(platform(libs.firebaseBOM))
+    implementation(libs.firebaseAnalytics)
+    implementation(libs.firebaseCrashlytics)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)

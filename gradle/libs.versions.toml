@@ -18,7 +18,7 @@ navigation = "2.7.7"
 testLogger = "3.2.0"
 androidJUnit5 = "1.10.0.0"
 kotlinSymbolProcessing = "2.0.0-1.0.21"
-
+firebaseBOMVer = "33.1.0"
 kotlinCompilerExtensionVersion = "1.5.4"
 
 compileSdk = "34"
@@ -26,6 +26,9 @@ targetSdk = "34"
 minSdk = "26"
 
 compose-plugin = "1.6.20-dev1646"
+
+firebase-plugin = "4.4.2"
+crashlytics-plugin = "3.0.1"
 
 coroutines = "1.8.1"
 retrofit = "2.11.0"
@@ -116,6 +119,9 @@ roomCompiler = { module = "androidx.room:room-compiler", version.ref = "room" }
 accompanistFlowLayout = { module = "com.google.accompanist:accompanist-flowlayout", version.ref = "accompanistFlowLayout" }
 detektFormatting = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt" }
 konsist = "com.lemonappdev:konsist:0.11.0"
+firebaseBOM = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBOMVer" }
+firebaseAnalytics = { module = "com.google.firebase:firebase-analytics" }
+firebaseCrashlytics = { module = "com.google.firebase:firebase-crashlytics" }
 
 # Test dependencies
 junit = { module = "junit:junit", version.ref = "junit" }
@@ -157,6 +163,6 @@ junit5Android = { id = "de.mannodermaus.android-junit5", version.ref = "androidJ
 testLogger = { id = "com.adarshr.test-logger", version.ref = "testLogger" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 jetbrainsCompose = { id = "org.jetbrains.compose", version.ref = "compose-plugin" }
-
-
+firebase = { id = "com.google.gms.google-services", version.ref = "firebase-plugin" }
+crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "crashlytics-plugin" }
 
