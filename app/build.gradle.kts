@@ -45,7 +45,6 @@ android {
         create("mock") {
             initWith(getByName("debug"))
             matchingFallbacks += listOf("debug")
-            applicationIdSuffix = ".mock"
             versionNameSuffix = "-mock"
         }
     }

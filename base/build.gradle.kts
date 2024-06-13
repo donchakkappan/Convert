@@ -47,6 +47,7 @@ dependencies {
     api(libs.bundles.lifecycle)
     api(libs.bundles.room)
 
+    api(libs.gson)
 
     testImplementation(libs.bundles.test)
 
