@@ -106,6 +106,13 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 
+    lintChecks(projects.lintRules)
+}
+
+tasks.whenTaskAdded {
+    if (name == "assembleDebug" || name == "assembleRelease") {
+        dependsOn("lint")
+    }
 }
 
 fun ApplicationDefaultConfig.buildConfigFieldFromGradleProperty(gradlePropertyName: String) {

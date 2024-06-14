@@ -1,4 +1,5 @@
 [versions]
+lint = '31.4.1' # = agp + 23.0.0
 agp = "8.4.1"
 kotlin = "2.0.0"
 coreKtx = "1.10.1"
@@ -66,6 +67,13 @@ activity = "1.9.0"
 gson = "2.11.0"
 
 [libraries]
+# For a description of the below dependencies, see the main project README
+lint-api = { group = "com.android.tools.lint", name = "lint-api", version.ref = "lint" }
+lint-checks = { group = "com.android.tools.lint", name = "lint-checks", version.ref = "lint" }
+lint-cli = { group = "com.android.tools.lint", name = "lint", version.ref = "lint" }
+lint-tests = { group = "com.android.tools.lint", name = "lint-tests", version.ref = "lint" }
+kotlin-stdlib = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib", version.ref = "kotlin" }
+
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
@@ -139,7 +147,6 @@ junitJupiterEngine = { module = "org.junit.jupiter:junit-jupiter-engine", versio
 uiTooling = { group = "androidx.compose.ui", name = "ui-tooling", version.ref = "uiTooling" }
 androidx-activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
 
-
 [bundles]
 retrofit = ["retrofitCore", "kotlinxSerializationConverter", "serializationJson", "okhttp", "okhttpInterceptor"]
 koin = ["koin", "koinNavigation"]
@@ -149,6 +156,15 @@ navigation = ["navigationFragment", "navigationUiKtx"]
 room = ["roomKtx", "roomRuntime"]
 test = ["testCoroutines", "kluent", "testRunner", "espresso", "mockk", "coreTesting", "junitJupiterApi",
     "junitJupiterEngine", "konsist"]
+lint-api = [
+    "kotlin-stdlib",
+    "lint-api",
+]
+lint-tests = [
+    "junit",
+    "lint-cli",
+    "lint-tests"
+]
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
@@ -168,4 +184,6 @@ compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "
 jetbrainsCompose = { id = "org.jetbrains.compose", version.ref = "compose-plugin" }
 firebase = { id = "com.google.gms.google-services", version.ref = "firebase-plugin" }
 crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "crashlytics-plugin" }
+android-lint = { id = "com.android.lint", version.ref = "agp" }
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 

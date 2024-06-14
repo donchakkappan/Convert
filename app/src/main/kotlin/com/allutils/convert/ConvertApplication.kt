@@ -20,10 +20,12 @@ class ConvertApplication : Application() {
     override fun onCreate() {
         enableStrictMode()
         super.onCreate()
-
+        val s="lint"
         initKoin()
         initTimber()
     }
+
+    fun lint() { }
 
     private fun initKoin() {
         GlobalContext.startKoin {

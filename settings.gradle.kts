@@ -30,3 +30,4 @@ include(":base")
 
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 include(":app_style_guide")
+include(":lint_rules")
