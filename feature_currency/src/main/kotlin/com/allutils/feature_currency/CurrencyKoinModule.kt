@@ -8,5 +8,5 @@ import com.allutils.feature_currency.di.presentationModule
 val currencyModules = listOf(
     presentationModule,
     domainModule,
-    if (BuildConfig.DEBUG) mockDataModule else dataModule,
+    if (BuildConfig.DEBUG) dataModule else mockDataModule,
 )

@@ -22,8 +22,6 @@ abstract class BaseViewModel<State : BaseState, Action : BaseAction<State>>(init
         }
     }
 
-    // Delegate handles state event deduplication (multiple states of the same type holding the same data
-    // will not be emitted multiple times to UI)
     private var state by Delegates.observable(initialState) { _, old, new ->
         if (old != new) {
             viewModelScope.launch {

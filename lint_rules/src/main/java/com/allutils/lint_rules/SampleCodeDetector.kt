@@ -67,7 +67,7 @@ class SampleCodeDetector : Detector(), UastScanner {
           """, // no need to .trimIndent(), lint does that automatically
         category = Category.CORRECTNESS,
         priority = 6,
-        severity = Severity.ERROR,
+        severity = Severity.WARNING,
         implementation = Implementation(SampleCodeDetector::class.java, Scope.JAVA_FILE_SCOPE),
       )
   }

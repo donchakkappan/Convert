@@ -42,7 +42,7 @@ internal class ConversionListViewModel(
         savedStateHandle[SAVED_QUERY_KEY] = baseCode
 
         job = viewModelScope.launch {
-            getConversionRatesUseCase(baseCode).also { result ->
+            getConversionRatesUseCase.invoke(baseCode).also { result ->
                 val action = when (result) {
                     is Result.Success -> {
                         if (result.value.isEmpty()) {
