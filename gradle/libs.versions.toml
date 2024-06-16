@@ -88,7 +88,7 @@ androidx-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
 androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
 androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
-androidx-material = { group = "androidx.compose.material", name = "material" , version.ref = "composeMaterial"}
+androidx-material = { group = "androidx.compose.material", name = "material", version.ref = "composeMaterial" }
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
@@ -133,6 +133,7 @@ konsist = "com.lemonappdev:konsist:0.11.0"
 firebaseBOM = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBOMVer" }
 firebaseAnalytics = { module = "com.google.firebase:firebase-analytics" }
 firebaseCrashlytics = { module = "com.google.firebase:firebase-crashlytics" }
+firebasePerformance = { module = "com.google.firebase:firebase-perf" }
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 leakCanary = { module = "com.squareup.leakcanary:leakcanary-android", version.ref = "verLeakCanary" }
 

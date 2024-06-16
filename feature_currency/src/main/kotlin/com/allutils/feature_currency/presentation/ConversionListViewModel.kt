@@ -9,6 +9,7 @@ import com.allutils.base.presentation.viewmodel.BaseViewModel
 import com.allutils.base.result.Result
 import com.allutils.feature_currency.domain.models.output.ConversionRatesOutput
 import com.allutils.feature_currency.domain.usecase.GetConversionRates
+import com.google.firebase.perf.metrics.AddTrace
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
@@ -33,6 +34,7 @@ internal class ConversionListViewModel(
 
     private var job: Job? = null
 
+    @AddTrace(name = "GET Conversion Rates Trace", enabled = true)
     fun getConversionRates() {
         if (job != null) {
             job?.cancel()

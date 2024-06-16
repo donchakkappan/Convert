@@ -49,6 +49,11 @@ dependencies {
 
     api(libs.gson)
 
+    api(platform(libs.firebaseBOM))
+    api(libs.firebaseAnalytics)
+    api(libs.firebaseCrashlytics)
+    api(libs.firebasePerformance)
+
     testImplementation(libs.bundles.test)
 
     testRuntimeOnly(libs.junitJupiterEngine)
