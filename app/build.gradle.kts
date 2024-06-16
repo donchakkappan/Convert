@@ -106,6 +106,8 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 
+    debugImplementation(libs.leakCanary)
+
     lintChecks(projects.lintRules)
 }
 
