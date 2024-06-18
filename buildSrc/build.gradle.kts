@@ -15,6 +15,7 @@ dependencies {
     implementation(plugin(libs.plugins.safeArgs))
     implementation(plugin(libs.plugins.firebase))
     implementation(plugin(libs.plugins.crashlytics))
+    implementation(plugin(libs.plugins.firebasePerformance))
     implementation(plugin(libs.plugins.android.lint))
 
     implementation(plugin(libs.plugins.android.application))

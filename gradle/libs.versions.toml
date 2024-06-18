@@ -30,6 +30,7 @@ minSdk = "26"
 compose-plugin = "1.6.20-dev1646"
 
 firebase-plugin = "4.4.2"
+firebase-performance = "1.4.2"
 crashlytics-plugin = "3.0.1"
 
 coroutines = "1.8.1"
@@ -187,6 +188,7 @@ compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "
 jetbrainsCompose = { id = "org.jetbrains.compose", version.ref = "compose-plugin" }
 firebase = { id = "com.google.gms.google-services", version.ref = "firebase-plugin" }
 crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "crashlytics-plugin" }
+firebasePerformance = { id = "com.google.firebase.firebase-perf", version.ref = "firebase-performance" }
 android-lint = { id = "com.android.lint", version.ref = "agp" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 
