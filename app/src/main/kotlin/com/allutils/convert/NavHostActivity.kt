@@ -1,6 +1,7 @@
 package com.allutils.convert
 
 import android.os.Bundle
+import androidx.navigation.dynamicfeatures.fragment.DynamicNavHostFragment
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import by.kirich1409.viewbindingdelegate.viewBinding
@@ -22,7 +23,7 @@ class NavHostActivity : BaseActivity(R.layout.activity_nav_host) {
     }
 
     private fun initBottomNavigation() {
-        val navController = binding.navHostFragment.getFragment<NavHostFragment>().navController
+        val navController = binding.navHostFragment.getFragment<DynamicNavHostFragment>().navController
         binding.bottomNav.setupWithNavController(navController)
     }
 

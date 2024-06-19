@@ -1,9 +1,10 @@
 import com.android.build.api.dsl.ApplicationDefaultConfig
+import com.android.build.api.dsl.DynamicFeatureDefaultConfig
 import com.android.build.api.dsl.LibraryDefaultConfig
 import java.util.Locale
 
 plugins {
-    id("local.library")
+    id("dynamic.module")
 }
 
 android {
@@ -17,6 +18,8 @@ android {
 
 dependencies {
     implementation(projects.base)
+    implementation(projects.app)
+
     debugImplementation(libs.uiTooling)
 
     ksp(libs.roomCompiler)
@@ -27,7 +30,7 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
 }
 
-fun LibraryDefaultConfig.buildConfigFieldFromGradleProperty(gradlePropertyName: String) {
+fun DynamicFeatureDefaultConfig.buildConfigFieldFromGradleProperty(gradlePropertyName: String) {
     val propertyValue = project.properties[gradlePropertyName] as? String
     checkNotNull(propertyValue) { "Gradle property $gradlePropertyName is null" }
 

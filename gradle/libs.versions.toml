@@ -96,6 +96,7 @@ material = { group = "com.google.android.material", name = "material", version.r
 
 navigationFragment = { module = "androidx.navigation:navigation-fragment-ktx", version.ref = "navigation" }
 navigationUiKtx = { module = "androidx.navigation:navigation-ui-ktx", version.ref = "navigation" }
+navigationDynamicFeatures = { module = "androidx.navigation:navigation-dynamic-features-fragment", version.ref = "navigation" }
 
 kotlin = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
 coroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutines" }
@@ -156,7 +157,7 @@ retrofit = ["retrofitCore", "kotlinxSerializationConverter", "serializationJson"
 koin = ["koin", "koinNavigation"]
 compose = ["composeUI", "toolingPreview", "coil"]
 lifecycle = ["viewmodelKtx", "livedataKtx", "livedataRuntime"]
-navigation = ["navigationFragment", "navigationUiKtx"]
+navigation = ["navigationFragment", "navigationUiKtx","navigationDynamicFeatures"]
 room = ["roomKtx", "roomRuntime"]
 test = ["testCoroutines", "kluent", "testRunner", "espresso", "mockk", "coreTesting", "junitJupiterApi",
     "junitJupiterEngine", "konsist"]

@@ -1,5 +1,5 @@
 plugins {
-    id("local.library")
+    id("dynamic.module")
 }
 
 android {
@@ -8,6 +8,7 @@ android {
 
 dependencies {
     implementation(projects.base)
+    implementation(projects.app)
 
     testImplementation(libs.bundles.test)
     testRuntimeOnly(libs.junitJupiterEngine)

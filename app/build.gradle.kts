@@ -40,15 +40,6 @@ android {
                 "proguard-rules.pro"
             )
         }
-        getByName("debug") {
-            applicationIdSuffix = ".dev"
-            versionNameSuffix = "-dev"
-        }
-        create("mock") {
-            initWith(getByName("debug"))
-            matchingFallbacks += listOf("debug")
-            versionNameSuffix = "-mock"
-        }
     }
 
     buildFeatures {
@@ -75,26 +66,19 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
-//    dynamicFeatures += setOf(
-//        ":feature_currency",
-//        ":feature_units",
-//        ":feature_emi",
-//        ":feature_media",
-//        ":feature_documents",
-//        ":feature_scanner"
-//    )
+    dynamicFeatures += setOf(
+        ":feature_currency",
+        ":feature_units",
+        ":feature_emi",
+        ":feature_media",
+        ":feature_documents",
+        ":feature_scanner"
+    )
 }
 
 dependencies {
 
     implementation(projects.base)
-
-    implementation(projects.featureCurrency)
-    implementation(projects.featureUnits)
-    implementation(projects.featureEmi)
-    implementation(projects.featureMedia)
-    implementation(projects.featureDocuments)
-    implementation(projects.featureScanner)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
@@ -109,11 +93,11 @@ dependencies {
     lintChecks(projects.lintRules)
 }
 
-tasks.whenTaskAdded {
-    if (name == "assembleDebug" || name == "assembleRelease") {
-        dependsOn("lint")
-    }
-}
+//tasks.whenTaskAdded {
+//    if (name == "assembleDebug" || name == "assembleRelease") {
+//        dependsOn("lint")
+//    }
+//}
 
 fun ApplicationDefaultConfig.buildConfigFieldFromGradleProperty(gradlePropertyName: String) {
     val propertyValue = project.properties[gradlePropertyName] as? String

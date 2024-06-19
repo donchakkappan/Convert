@@ -7,13 +7,19 @@ import android.view.ViewGroup
 import androidx.compose.ui.platform.ComposeView
 import com.allutils.app_style_guide.theme.ConvertTheme
 import com.allutils.base.presentation.activity.BaseFragment
-import com.allutils.feature_currency.R
+import com.allutils.feature_currency.currencyModules
 import com.allutils.feature_currency.presentation.conversion.HomeScreen
-import org.koin.androidx.navigation.koinNavGraphViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.context.loadKoinModules
 
 class ConversionListFragment : BaseFragment() {
 
-    private val model: ConversionListViewModel by koinNavGraphViewModel(R.id.nav_graph_currencies)
+    private val model: ConversionListViewModel by viewModel()
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        loadKoinModules(currencyModules)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,

@@ -29,7 +29,7 @@ dependencies {
 
 
     api(libs.kotlin)
-    api(libs.playCore)
+    //api(libs.playCore)
     api(libs.coreKtx)
     api(libs.fragmentKtx)
     api(libs.viewBindingPropertyDelegate)
