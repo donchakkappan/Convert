@@ -2,7 +2,6 @@ package com.allutils.convert
 
 import android.os.Bundle
 import androidx.navigation.dynamicfeatures.fragment.DynamicNavHostFragment
-import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.allutils.base.nav.NavManager
