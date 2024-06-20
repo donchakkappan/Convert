@@ -17,6 +17,7 @@ class ConvertApplication : Application() {
 
         initKoin()
         initTimber()
+        createAppShortCuts()
     }
 
     private fun initKoin() {
@@ -53,5 +54,10 @@ class ConvertApplication : Application() {
                     .build()
             )
         }
+    }
+
+    private fun createAppShortCuts() {
+        val shortcutManager = ShortcutsHandler(this)
+        shortcutManager.createShortcuts()
     }
 }
