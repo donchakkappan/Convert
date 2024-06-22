@@ -1,10 +1,12 @@
-package com.allutils.convert
+package com.allutils.convert.utils
 
 import android.content.Context
 import android.content.Intent
 import androidx.core.content.pm.ShortcutInfoCompat
 import androidx.core.content.pm.ShortcutManagerCompat
 import androidx.core.graphics.drawable.IconCompat
+import com.allutils.convert.NavHostActivity
+import com.allutils.convert.R
 
 class ShortcutsHandler(private val context: Context) {
 

@@ -3,20 +3,20 @@ package com.allutils.feature_currency.data
 import com.allutils.base.result.Result
 import com.allutils.base.retrofit.ApiResult
 import com.allutils.feature_currency.BuildConfig
-import com.allutils.feature_currency.data.local.CurrenciesDao
-import com.allutils.feature_currency.data.local.models.entities.toDomainModel
+import com.allutils.feature_currency.data.database.CurrenciesDao
+import com.allutils.feature_currency.data.database.models.entities.toDomainModel
 import com.allutils.feature_currency.data.network.ConversionRatesNetworkService
 import com.allutils.feature_currency.data.network.models.response.toConversionRatesEntityModel
 import com.allutils.feature_currency.data.network.models.response.toDomainModel
 import com.allutils.feature_currency.data.network.models.response.toMetaDataEntityModel
-import com.allutils.feature_currency.domain.CurrenciesRepository
+import com.allutils.feature_currency.domain.ICurrenciesRepository
 import com.allutils.feature_currency.domain.models.output.ConversionRatesOutput
 import timber.log.Timber
 
 internal class CurrenciesRepositoryImpl(
     private val networkService: ConversionRatesNetworkService,
     private val databaseService: CurrenciesDao
-) : CurrenciesRepository {
+) : ICurrenciesRepository {
 
     override suspend fun getConversionRates(
         baseCode: String

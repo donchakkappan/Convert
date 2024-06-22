@@ -48,6 +48,7 @@ dependencies {
     api(libs.bundles.room)
 
     api(libs.gson)
+    api(libs.datastorePreferences)
 
     api(platform(libs.firebaseBOM))
     api(libs.firebaseAnalytics)

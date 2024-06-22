@@ -1,4 +1,4 @@
-package com.allutils.convert.onboarding
+package com.allutils.convert.presentation.onboarding
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth

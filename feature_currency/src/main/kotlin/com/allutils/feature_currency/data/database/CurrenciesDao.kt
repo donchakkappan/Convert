@@ -1,11 +1,11 @@
-package com.allutils.feature_currency.data.local
+package com.allutils.feature_currency.data.database
 
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.allutils.feature_currency.data.local.models.entities.ConversionRateEntity
-import com.allutils.feature_currency.data.local.models.entities.ConversionRateMetaDataEntity
+import com.allutils.feature_currency.data.database.models.entities.ConversionRateEntity
+import com.allutils.feature_currency.data.database.models.entities.ConversionRateMetaDataEntity
 
 @Dao
 internal interface CurrenciesDao {

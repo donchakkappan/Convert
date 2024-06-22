@@ -2,15 +2,19 @@ package com.allutils.feature_currency.di
 
 import androidx.room.Room
 import com.allutils.feature_currency.data.CurrenciesRepositoryImpl
-import com.allutils.feature_currency.data.local.CurrenciesDatabase
+import com.allutils.feature_currency.data.database.CurrenciesDatabase
+import com.allutils.convert.data.UserPreferencesRepository
 import com.allutils.feature_currency.data.network.ConversionRatesNetworkService
-import com.allutils.feature_currency.domain.CurrenciesRepository
+import com.allutils.feature_currency.domain.ICurrenciesRepository
+import com.allutils.convert.domain.IUserPreferencesRepository
 import org.koin.dsl.module
 import retrofit2.Retrofit
 
 internal val dataModule = module {
 
-    single<CurrenciesRepository> { CurrenciesRepositoryImpl(get(), get()) }
+    single<ICurrenciesRepository> { CurrenciesRepositoryImpl(get(), get()) }
+
+
 
     single { get<Retrofit>().create(ConversionRatesNetworkService::class.java) }
 

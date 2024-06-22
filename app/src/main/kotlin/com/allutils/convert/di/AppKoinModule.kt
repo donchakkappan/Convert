@@ -1,11 +1,17 @@
-package com.allutils.convert
+package com.allutils.convert.di
 
 import com.allutils.base.retrofit.ApiResultAdapterFactory
+import com.allutils.convert.BuildConfig
+import com.allutils.convert.data.UserPreferencesRepository
+import com.allutils.convert.domain.IUserPreferencesRepository
+import com.allutils.convert.presentation.AppViewModel
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import kotlinx.serialization.ExperimentalSerializationApi
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import org.koin.android.ext.koin.androidContext
+import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 import retrofit2.Retrofit
 import timber.log.Timber
@@ -26,6 +32,8 @@ val appModule = module {
             .build()
     }
 
+    single<IUserPreferencesRepository> { UserPreferencesRepository(androidContext()) }
+
     single {
         val contentType = "application/json".toMediaType()
 
@@ -43,4 +51,6 @@ val appModule = module {
             .addCallAdapterFactory(ApiResultAdapterFactory())
             .build()
     }
+
+    viewModel { AppViewModel(get()) }
 }

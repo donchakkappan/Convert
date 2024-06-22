@@ -4,13 +4,13 @@ import android.content.Context
 import com.allutils.base.result.Result
 import com.allutils.feature_currency.data.network.models.response.ConversionRateResponse
 import com.allutils.feature_currency.data.network.models.response.toDomainModel
-import com.allutils.feature_currency.domain.CurrenciesRepository
+import com.allutils.feature_currency.domain.ICurrenciesRepository
 import com.allutils.feature_currency.domain.models.output.ConversionRatesOutput
 import com.google.gson.Gson
 import java.io.BufferedReader
 import java.io.InputStreamReader
 
-internal class CurrenciesRepositoryMockImpl(private val context: Context) : CurrenciesRepository {
+internal class CurrenciesRepositoryMockImpl(private val context: Context) : ICurrenciesRepository {
 
     override suspend fun getConversionRates(
         baseCode: String

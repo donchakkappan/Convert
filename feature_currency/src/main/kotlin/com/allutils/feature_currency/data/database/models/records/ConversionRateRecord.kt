@@ -1,4 +1,4 @@
-package com.allutils.feature_currency.data.local.models.records
+package com.allutils.feature_currency.data.database.models.records
 
 internal data class ConversionRateRecord(
     val currencyCode: String,

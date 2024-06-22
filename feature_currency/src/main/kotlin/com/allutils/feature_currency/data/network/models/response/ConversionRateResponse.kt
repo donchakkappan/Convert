@@ -1,7 +1,7 @@
 package com.allutils.feature_currency.data.network.models.response
 
-import com.allutils.feature_currency.data.local.models.entities.ConversionRateEntity
-import com.allutils.feature_currency.data.local.models.entities.ConversionRateMetaDataEntity
+import com.allutils.feature_currency.data.database.models.entities.ConversionRateEntity
+import com.allutils.feature_currency.data.database.models.entities.ConversionRateMetaDataEntity
 import com.allutils.feature_currency.domain.models.output.ConversionRatesOutput
 import com.google.gson.annotations.SerializedName
 import kotlinx.serialization.SerialName

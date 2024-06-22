@@ -1,5 +1,6 @@
-package com.allutils.convert.onboarding
+package com.allutils.convert.presentation.onboarding
 
+import android.app.Activity
 import android.content.Intent
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.layout.Box
@@ -21,6 +22,7 @@ import com.allutils.app_style_guide.components.TertiaryButton
 import com.allutils.app_style_guide.components.carousel.Pager
 import com.allutils.app_style_guide.components.carousel.PagerState
 import com.allutils.convert.NavHostActivity
+
 
 @Composable
 fun OnBoardingScreen() {
@@ -50,7 +52,10 @@ fun OnBoardingScreen() {
                     .align(Alignment.TopEnd)
                     .padding(vertical = 48.dp, horizontal = 16.dp)
             ) {
-                context.startActivity(Intent(context, NavHostActivity::class.java))
+                val intent = Intent(context, NavHostActivity::class.java)
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                context.startActivity(intent)
+                (context as Activity).finish()
             }
             Row(
                 modifier = Modifier

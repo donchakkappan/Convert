@@ -4,6 +4,8 @@ import android.app.Application
 import android.os.StrictMode
 import com.allutils.base.baseModule
 import com.allutils.convert.BuildConfig.DEBUG
+import com.allutils.convert.di.appModule
+import com.allutils.convert.utils.ShortcutsHandler
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.GlobalContext

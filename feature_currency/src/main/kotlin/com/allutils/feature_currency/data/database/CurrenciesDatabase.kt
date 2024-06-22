@@ -1,9 +1,9 @@
-package com.allutils.feature_currency.data.local
+package com.allutils.feature_currency.data.database
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
-import com.allutils.feature_currency.data.local.models.entities.ConversionRateEntity
-import com.allutils.feature_currency.data.local.models.entities.ConversionRateMetaDataEntity
+import com.allutils.feature_currency.data.database.models.entities.ConversionRateEntity
+import com.allutils.feature_currency.data.database.models.entities.ConversionRateMetaDataEntity
 
 @Database(
     entities = [ConversionRateEntity::class,

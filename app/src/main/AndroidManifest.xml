@@ -22,25 +22,15 @@
             android:value="true" />
 
         <activity
-            android:name=".OnboardingActivity"
-            android:exported="true">
+            android:name=".NavHostActivity"
+            android:exported="true"
+            android:theme="@style/Theme.Convert">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <action android:name="android.intent.action.VIEW" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-        <activity
-            android:name=".NavHostActivity"
-            android:exported="true"
-            android:theme="@style/Theme.Convert">
-            <!--            <intent-filter>-->
-            <!--                <action android:name="android.intent.action.MAIN" />-->
-            <!--                <action android:name="android.intent.action.VIEW" />-->
-
-            <!--                <category android:name="android.intent.category.LAUNCHER" />-->
-            <!--            </intent-filter>-->
         </activity>
     </application>
 

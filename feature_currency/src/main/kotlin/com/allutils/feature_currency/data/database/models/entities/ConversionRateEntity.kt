@@ -1,4 +1,4 @@
-package com.allutils.feature_currency.data.local.models.entities
+package com.allutils.feature_currency.data.database.models.entities
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

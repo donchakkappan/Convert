@@ -1,4 +1,4 @@
-package com.allutils.convert.onboarding
+package com.allutils.convert.presentation.onboarding
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon

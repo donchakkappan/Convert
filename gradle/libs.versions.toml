@@ -22,6 +22,7 @@ kotlinSymbolProcessing = "2.0.0-1.0.21"
 firebaseBOMVer = "33.1.0"
 kotlinCompilerExtensionVersion = "1.5.4"
 verLeakCanary = "2.14"
+verDatastorePreferences="1.0.0"
 
 compileSdk = "34"
 targetSdk = "34"
@@ -138,6 +139,7 @@ firebaseCrashlytics = { module = "com.google.firebase:firebase-crashlytics" }
 firebasePerformance = { module = "com.google.firebase:firebase-perf" }
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 leakCanary = { module = "com.squareup.leakcanary:leakcanary-android", version.ref = "verLeakCanary" }
+datastorePreferences = { module = "androidx.datastore:datastore-preferences", version.ref = "verDatastorePreferences" }
 
 # Test dependencies
 junit = { module = "junit:junit", version.ref = "junit" }
