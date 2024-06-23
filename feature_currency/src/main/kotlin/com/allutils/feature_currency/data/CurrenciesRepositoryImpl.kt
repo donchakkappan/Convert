@@ -27,8 +27,8 @@ internal class CurrenciesRepositoryImpl(
                 val conversionRates = networkResponse
                     .data
                     .also {
-                        databaseService.insert(it.toMetaDataEntityModel())
-                        databaseService.insertConversionRates(it.toConversionRatesEntityModel())
+                        databaseService.insertConversionRateMetaData(it.toMetaDataEntityModel())
+                        databaseService.insertBulkConversionRates(it.toConversionRatesEntityModel())
                     }
                     .toDomainModel()
                 Result.Success(conversionRates)
@@ -42,11 +42,73 @@ internal class CurrenciesRepositoryImpl(
                 Timber.e(networkResponse.throwable)
 
                 val localConversionRates = databaseService
-                    .getRates(baseCode = baseCode)
+                    .getAllConversionRates(baseCode = baseCode)
                     .map { it.toDomainModel() }
 
                 Result.Success(localConversionRates)
             }
         }
+
+    override suspend fun getFavoriteConversionRates(baseCode: String): Result<List<ConversionRatesOutput>> =
+        when (val networkResponse =
+            networkService.getConversionRates(BuildConfig.GRADLE_CURRENCY_API_KEY, baseCode)) {
+            is ApiResult.Success -> {
+                val conversionRates = networkResponse
+                    .data
+                    .also {
+                        databaseService.insertConversionRateMetaData(it.toMetaDataEntityModel())
+                        databaseService.insertBulkConversionRates(it.toConversionRatesEntityModel())
+                    }
+                    .toDomainModel()
+                Result.Success(conversionRates)
+            }
+
+            is ApiResult.Error -> {
+                Result.Failure()
+            }
+
+            is ApiResult.Exception -> {
+                Timber.e(networkResponse.throwable)
+
+                val localConversionRates = databaseService
+                    .getAllConversionRates(baseCode = baseCode)
+                    .map { it.toDomainModel() }
+
+                Result.Success(localConversionRates)
+            }
+        }
+
+    override suspend fun getLocalConversionRate(baseCode: String, localCurrencyCode: String): Result<List<ConversionRatesOutput>> =
+        when (val networkResponse =
+            networkService.getConversionRates(BuildConfig.GRADLE_CURRENCY_API_KEY, baseCode)) {
+            is ApiResult.Success -> {
+                val conversionRates = networkResponse
+                    .data
+                    .also {
+                        databaseService.insertConversionRateMetaData(it.toMetaDataEntityModel())
+                        databaseService.insertBulkConversionRates(it.toConversionRatesEntityModel())
+                    }
+                    .toDomainModel()
+                Result.Success(conversionRates)
+            }
+
+            is ApiResult.Error -> {
+                Result.Failure()
+            }
+
+            is ApiResult.Exception -> {
+                Timber.e(networkResponse.throwable)
+
+                val localConversionRates = databaseService
+                    .getAllConversionRates(baseCode = baseCode)
+                    .map { it.toDomainModel() }
+
+                Result.Success(localConversionRates)
+            }
+        }
+
+    override suspend fun isThereAnyFavorite(): Boolean {
+        return databaseService.hasFavoriteItem() > 0
+    }
 
 }

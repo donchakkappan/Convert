@@ -52,7 +52,7 @@ internal fun BasecodeList(
                 "https://flagsapi.com/" + currency.currencyCode.take(2) + "/shiny/64.png"
             ) {
                 viewModel?.baseCode = it
-                viewModel?.getConversionRates()
+                viewModel?.showConversionRates()
                 coroutineScope.launch {
                     sheetState.hide()
                 }

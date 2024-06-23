@@ -7,4 +7,9 @@ internal interface ICurrenciesRepository {
 
     suspend fun getConversionRates(baseCode: String): Result<List<ConversionRatesOutput>>
 
+    suspend fun getFavoriteConversionRates(baseCode: String): Result<List<ConversionRatesOutput>>
+
+    suspend fun getLocalConversionRate(baseCode: String, localCurrencyCode: String): Result<List<ConversionRatesOutput>>
+
+    suspend fun isThereAnyFavorite(): Boolean
 }

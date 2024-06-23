@@ -20,6 +20,18 @@ internal class CurrenciesRepositoryMockImpl(private val context: Context) : ICur
         return Result.Success(conversionRates.toDomainModel())
     }
 
+    override suspend fun getFavoriteConversionRates(baseCode: String): Result<List<ConversionRatesOutput>> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun getLocalConversionRate(baseCode: String, localCurrencyCode: String): Result<List<ConversionRatesOutput>> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun isThereAnyFavorite(): Boolean {
+        TODO("Not yet implemented")
+    }
+
     private fun readJsonFromAssets(context: Context, fileName: String): String {
         val assetManager = context.assets
         val inputStream = assetManager.open(fileName)

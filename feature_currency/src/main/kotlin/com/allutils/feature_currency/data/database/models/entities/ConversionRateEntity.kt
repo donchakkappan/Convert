@@ -20,6 +20,7 @@ data class ConversionRateMetaDataEntity(
 
 @Entity(
     tableName = "conversion_rate",
+    primaryKeys = ["baseCode", "currencyCode"],
     foreignKeys = [ForeignKey(
         entity = ConversionRateMetaDataEntity::class,
         parentColumns = ["baseCode"],
@@ -28,14 +29,16 @@ data class ConversionRateMetaDataEntity(
     )]
 )
 data class ConversionRateEntity(
-    @PrimaryKey @ColumnInfo(name = "currencyCode") val currencyCode: String,
     @ColumnInfo(name = "baseCode") val baseCode: String,
-    @ColumnInfo(name = "rate") val rate: Double
+    @ColumnInfo(name = "currencyCode") val currencyCode: String,
+    @ColumnInfo(name = "rate") val rate: Double,
+    @ColumnInfo(name = "isFavorite") val isFavorite: Boolean? = false
 )
 
 internal fun ConversionRateEntity.toDomainModel() =
     ConversionRatesOutput(
         baseCode = this.baseCode,
         currencyCode = this.currencyCode,
-        rate = this.rate
+        rate = this.rate,
+        isFavorite = this.isFavorite
     )
