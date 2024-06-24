@@ -11,6 +11,10 @@ import com.allutils.feature_currency.data.network.models.response.toDomainModel
 import com.allutils.feature_currency.data.network.models.response.toMetaDataEntityModel
 import com.allutils.feature_currency.domain.ICurrenciesRepository
 import com.allutils.feature_currency.domain.models.output.ConversionRatesOutput
+import com.allutils.feature_currency.utils.Resource
+import com.allutils.feature_currency.utils.networkBoundResource
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import timber.log.Timber
 
 internal class CurrenciesRepositoryImpl(
@@ -49,34 +53,50 @@ internal class CurrenciesRepositoryImpl(
             }
         }
 
-    override suspend fun getFavoriteConversionRates(baseCode: String): Result<List<ConversionRatesOutput>> =
-        when (val networkResponse =
-            networkService.getConversionRates(BuildConfig.GRADLE_CURRENCY_API_KEY, baseCode)) {
-            is ApiResult.Success -> {
-                val conversionRates = networkResponse
-                    .data
-                    .also {
-                        databaseService.insertConversionRateMetaData(it.toMetaDataEntityModel())
-                        databaseService.insertBulkConversionRates(it.toConversionRatesEntityModel())
-                    }
-                    .toDomainModel()
-                Result.Success(conversionRates)
-            }
-
-            is ApiResult.Error -> {
-                Result.Failure()
-            }
-
-            is ApiResult.Exception -> {
-                Timber.e(networkResponse.throwable)
-
+    override suspend fun getFavoriteConversionRates(baseCode: String): Flow<Resource<List<ConversionRatesOutput>>> = networkBoundResource(
+        // pass in the logic to query data from the database
+        query = {
+            flow {
                 val localConversionRates = databaseService
                     .getAllConversionRates(baseCode = baseCode)
                     .map { it.toDomainModel() }
 
-                Result.Success(localConversionRates)
+                emit(localConversionRates)
             }
+        },
+        // pass in the logic to fetch data from the api
+        fetch = {
+            networkService.getConversionRates(BuildConfig.GRADLE_CURRENCY_API_KEY, baseCode)
+        },
+
+        //pass in the logic to save the result to the local cache
+        saveFetchResult = { conversionRates ->
+
+            when (conversionRates) {
+                is ApiResult.Success -> {
+                    conversionRates
+                        .data
+                        .also {
+                            databaseService.insertConversionRateMetaData(it.toMetaDataEntityModel())
+                            databaseService.insertBulkConversionRates(it.toConversionRatesEntityModel())
+                        }
+                }
+
+                is ApiResult.Error -> {
+
+                }
+
+                is ApiResult.Exception -> {
+
+                }
+            }
+        },
+
+        //pass in the logic to determine if the networking call should be made
+        shouldFetch = { conversionRates ->
+            conversionRates.isEmpty()
         }
+    )
 
     override suspend fun getLocalConversionRate(baseCode: String, localCurrencyCode: String): Result<List<ConversionRatesOutput>> =
         when (val networkResponse =

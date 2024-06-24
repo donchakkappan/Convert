@@ -9,9 +9,11 @@ import com.allutils.base.result.Result
 import com.allutils.feature_currency.domain.models.output.ConversionRatesOutput
 import com.allutils.feature_currency.domain.usecase.GetAllConversionRates
 import com.allutils.feature_currency.domain.usecase.GetFavoriteConversionRates
+import com.allutils.feature_currency.utils.Resource
 import com.allutils.feature_currency.utils.getLocalCurrencyCode
 import com.google.firebase.perf.metrics.AddTrace
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 internal class ConversionListViewModel(
@@ -37,20 +39,26 @@ internal class ConversionListViewModel(
 
         job = viewModelScope.launch {
             favoriteConversionRates.invoke(baseCode, getLocalCurrencyCode()).also { result ->
-                val action = when (result) {
-                    is Result.Success -> {
-                        if (result.value.isEmpty()) {
+                result.collectLatest {
+                    val action = when (it) {
+                        is Resource.Success -> {
+                            if (it.data?.isEmpty() == true) {
+                                Action.ConversionRatesLoadFailure
+                            } else {
+                                Action.ConversionRatesLoadSuccess(it.data!!, amount)
+                            }
+                        }
+
+                        is Resource.Error -> {
                             Action.ConversionRatesLoadFailure
-                        } else {
-                            Action.ConversionRatesLoadSuccess(result.value, amount)
+                        }
+
+                        else -> {
+                            Action.ConversionRatesLoadFailure
                         }
                     }
-
-                    is Result.Failure -> {
-                        Action.ConversionRatesLoadFailure
-                    }
+                    sendAction(action)
                 }
-                sendAction(action)
             }
         }
     }
