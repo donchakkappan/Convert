@@ -53,7 +53,7 @@ recyclerView = "1.3.2"
 compose = "1.6.7"
 materialCompose = "1.2.1"
 lottie = "6.4.1"
-playCore = "1.10.3"
+#playCore = "1.10.3"
 fragmentKtx = "1.7.1"
 # Info https://google.github.io/accompanist/flowlayout/
 # Repo https://oss.sonatype.org/content/repositories/snapshots/com/google/accompanist/accompanist-flowlayout/
@@ -119,7 +119,7 @@ recyclerView = { module = "androidx.recyclerview:recyclerview", version.ref = "r
 composeMaterial = { module = "androidx.compose.material3:material3", version.ref = "materialCompose" }
 lottie = { module = "com.airbnb.android:lottie-compose", version.ref = "lottie" }
 coil = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
-playCore = { module = "com.google.android.play:core", version.ref = "playCore" }
+#playCore = { module = "com.google.android.play:core", version.ref = "playCore" }
 coreKtx = { module = "androidx.core:core-ktx", version.ref = "coreKtx" }
 fragmentKtx = { module = "androidx.fragment:fragment-ktx", version.ref = "fragmentKtx" }
 viewmodelKtx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "lifecycle" }
