@@ -75,4 +75,7 @@ internal interface CurrenciesDao {
 
     @Query("SELECT COUNT(*) FROM conversion_rate WHERE isFavorite = 1")
     suspend fun hasFavoriteItem(): Int
+
+    @Query("SELECT * FROM conversion_rate WHERE baseCode = :baseCode AND currencyCode = :currencyCode")
+    suspend fun getLocalConversionRate(baseCode: String, currencyCode: String): List<ConversionRateEntity>
 }

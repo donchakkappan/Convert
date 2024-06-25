@@ -58,7 +58,7 @@ internal class CurrenciesRepositoryImpl(
         query = {
             flow {
                 val localConversionRates = databaseService
-                    .getAllConversionRates(baseCode = baseCode)
+                    .getFavoriteConversionRates(baseCode = baseCode)
                     .map { it.toDomainModel() }
 
                 emit(localConversionRates)
@@ -98,34 +98,51 @@ internal class CurrenciesRepositoryImpl(
         }
     )
 
-    override suspend fun getLocalConversionRate(baseCode: String, localCurrencyCode: String): Result<List<ConversionRatesOutput>> =
-        when (val networkResponse =
-            networkService.getConversionRates(BuildConfig.GRADLE_CURRENCY_API_KEY, baseCode)) {
-            is ApiResult.Success -> {
-                val conversionRates = networkResponse
-                    .data
-                    .also {
-                        databaseService.insertConversionRateMetaData(it.toMetaDataEntityModel())
-                        databaseService.insertBulkConversionRates(it.toConversionRatesEntityModel())
+    override suspend fun getLocalConversionRate(baseCode: String, localCurrencyCode: String): Flow<Resource<List<ConversionRatesOutput>>> =
+        networkBoundResource(
+            // pass in the logic to query data from the database
+            query = {
+                flow {
+                    val localConversionRates = databaseService
+                        .getLocalConversionRate(baseCode = baseCode, currencyCode = localCurrencyCode)
+                        .map { it.toDomainModel() }
+
+                    emit(localConversionRates)
+                }
+            },
+            // pass in the logic to fetch data from the api
+            fetch = {
+                networkService.getConversionRates(BuildConfig.GRADLE_CURRENCY_API_KEY, baseCode)
+            },
+
+            //pass in the logic to save the result to the local cache
+            saveFetchResult = { conversionRates ->
+
+                when (conversionRates) {
+                    is ApiResult.Success -> {
+                        conversionRates
+                            .data
+                            .also {
+                                databaseService.insertConversionRateMetaData(it.toMetaDataEntityModel())
+                                databaseService.insertBulkConversionRates(it.toConversionRatesEntityModel())
+                            }
                     }
-                    .toDomainModel()
-                Result.Success(conversionRates)
+
+                    is ApiResult.Error -> {
+
+                    }
+
+                    is ApiResult.Exception -> {
+
+                    }
+                }
+            },
+
+            //pass in the logic to determine if the networking call should be made
+            shouldFetch = { conversionRates ->
+                conversionRates.isEmpty()
             }
-
-            is ApiResult.Error -> {
-                Result.Failure()
-            }
-
-            is ApiResult.Exception -> {
-                Timber.e(networkResponse.throwable)
-
-                val localConversionRates = databaseService
-                    .getAllConversionRates(baseCode = baseCode)
-                    .map { it.toDomainModel() }
-
-                Result.Success(localConversionRates)
-            }
-        }
+        )
 
     override suspend fun isThereAnyFavorite(): Boolean {
         return databaseService.hasFavoriteItem() > 0

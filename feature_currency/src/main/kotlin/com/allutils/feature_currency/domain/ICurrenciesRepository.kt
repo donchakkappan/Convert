@@ -11,7 +11,7 @@ internal interface ICurrenciesRepository {
 
     suspend fun getFavoriteConversionRates(baseCode: String): Flow<Resource<List<ConversionRatesOutput>>>
 
-    suspend fun getLocalConversionRate(baseCode: String, localCurrencyCode: String): Result<List<ConversionRatesOutput>>
+    suspend fun getLocalConversionRate(baseCode: String, localCurrencyCode: String): Flow<Resource<List<ConversionRatesOutput>>>
 
     suspend fun isThereAnyFavorite(): Boolean
 }

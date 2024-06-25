@@ -26,7 +26,7 @@ internal class CurrenciesRepositoryMockImpl(private val context: Context) : ICur
         TODO("Not yet implemented")
     }
 
-    override suspend fun getLocalConversionRate(baseCode: String, localCurrencyCode: String): Result<List<ConversionRatesOutput>> {
+    override suspend fun getLocalConversionRate(baseCode: String, localCurrencyCode: String): Flow<Resource<List<ConversionRatesOutput>>> {
         TODO("Not yet implemented")
     }
 
