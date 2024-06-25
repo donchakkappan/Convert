@@ -26,7 +26,12 @@ internal fun BasecodeList(sheetState: ModalBottomSheetState, viewModel: Conversi
         when (it) {
             ConversionListViewModel.UiState.Error -> DataNotFoundAnim()
             ConversionListViewModel.UiState.Loading -> ProgressIndicator()
-            is ConversionListViewModel.UiState.Content -> BasecodeList(
+            is ConversionListViewModel.UiState.FavoriteContent -> BasecodeList(
+                sheetState,
+                it.conversionRates,
+                viewModel
+            )
+            is ConversionListViewModel.UiState.LocalContent -> BasecodeList(
                 sheetState,
                 it.conversionRates,
                 viewModel

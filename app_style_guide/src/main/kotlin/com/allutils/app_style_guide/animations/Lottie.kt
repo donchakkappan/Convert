@@ -42,6 +42,6 @@ fun LottieAssetLoader(@RawRes assetResId: Int) {
 
     LottieAnimation(
         composition,
-        modifier = Modifier.requiredSize(100.dp),
+        modifier = Modifier.requiredSize(200.dp),
     )
 }

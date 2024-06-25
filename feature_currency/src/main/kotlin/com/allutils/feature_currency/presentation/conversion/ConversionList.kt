@@ -19,6 +19,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.SpanStyle
@@ -31,6 +32,7 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.allutils.app_style_guide.animations.LottieAssetLoader
 import com.allutils.app_style_guide.components.NumberField
 import com.allutils.app_style_guide.styles.darkestBlue
 import com.allutils.app_style_guide.styles.headingH4
@@ -42,28 +44,10 @@ import com.allutils.feature_currency.presentation.ConversionListViewModel
 import com.allutils.feature_currency.presentation.basecode.BasecodeList
 import kotlinx.coroutines.launch
 
-@Composable
-internal fun HomeScreen(viewModel: ConversionListViewModel) {
-    val uiState: ConversionListViewModel.UiState by viewModel.uiStateFlow.collectAsStateWithLifecycle()
-
-    uiState.let {
-        when (it) {
-            ConversionListViewModel.UiState.Error -> DataNotFoundAnim()
-            ConversionListViewModel.UiState.Loading -> ProgressIndicator()
-            is ConversionListViewModel.UiState.Content -> ConversionList(
-                it.conversionRates,
-                viewModel
-            )
-        }
-    }
-}
-
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-internal fun ConversionList(
-    conversionRates: List<ConversionRatesOutput>,
-    viewModel: ConversionListViewModel
-) {
+internal fun HomeScreen(viewModel: ConversionListViewModel) {
+
     val sheetState = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden,
     )
@@ -103,10 +87,36 @@ internal fun ConversionList(
                         start.linkTo(parent.start)
                         end.linkTo(parent.end)
                         height = Dimension.fillToConstraints
+                        width = Dimension.fillToConstraints
                     },
             ) {
-                CurrencyListCard(viewModel, conversionRates)
+                ConversionList(viewModel)
             }
+        }
+    }
+
+}
+
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+internal fun ConversionList(
+    viewModel: ConversionListViewModel
+) {
+    val uiState: ConversionListViewModel.UiState by viewModel.uiStateFlow.collectAsStateWithLifecycle()
+
+    uiState.let {
+        when (it) {
+            ConversionListViewModel.UiState.Error -> DataNotFoundAnim()
+            ConversionListViewModel.UiState.Loading -> ProgressIndicator()
+            is ConversionListViewModel.UiState.FavoriteContent -> FavoriteCurrencyListCard(
+                viewModel,
+                it.conversionRates
+            )
+
+            is ConversionListViewModel.UiState.LocalContent -> LocalCurrencyListCard(
+                viewModel,
+                it.conversionRates
+            )
         }
     }
 
@@ -178,7 +188,7 @@ internal fun HeaderCard(
 }
 
 @Composable
-internal fun CurrencyListCard(
+internal fun FavoriteCurrencyListCard(
     viewModel: ConversionListViewModel,
     conversionRates: List<ConversionRatesOutput>
 ) {
@@ -197,6 +207,50 @@ internal fun CurrencyListCard(
     }
 }
 
+@Composable
+internal fun LocalCurrencyListCard(
+    viewModel: ConversionListViewModel,
+    conversionRates: List<ConversionRatesOutput>
+) {
+    ConstraintLayout(
+        modifier = Modifier
+            .fillMaxSize()
+    ) {
+        val (localCurrency, lottie) = createRefs()
 
+        LazyColumn(
+            Modifier
+                .constrainAs(localCurrency) {
+                    top.linkTo(parent.top)
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
+                    height = Dimension.wrapContent
+                }
+        ) {
+            items(items = conversionRates, key = { it.currencyCode }) { currency ->
+                CurrencyListItem(
+                    currency.baseCode,
+                    currency.currencyCode,
+                    currency.rate.toString(),
+                    "https://flagsapi.com/" + currency.currencyCode.take(2) + "/shiny/64.png",
+                    viewModel.amount ?: 1.0
+                )
+            }
+        }
+
+        Column(
+            modifier = Modifier
+                .constrainAs(lottie) {
+                    top.linkTo(localCurrency.bottom)
+                    bottom.linkTo(parent.bottom)
+                    start.linkTo(parent.start)
+                    height = Dimension.wrapContent
+                },
+            horizontalAlignment = Alignment.Start
+        ) {
+            LottieAssetLoader(com.allutils.feature_currency.R.raw.hello)
+        }
+    }
+}
 
 

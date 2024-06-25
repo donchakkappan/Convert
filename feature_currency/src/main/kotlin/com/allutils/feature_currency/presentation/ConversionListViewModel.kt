@@ -7,6 +7,7 @@ import com.allutils.base.presentation.viewmodel.BaseState
 import com.allutils.base.presentation.viewmodel.BaseViewModel
 import com.allutils.base.result.Result
 import com.allutils.feature_currency.domain.models.output.ConversionRatesOutput
+import com.allutils.feature_currency.domain.usecase.AnyFavoriteConversion
 import com.allutils.feature_currency.domain.usecase.GetAllConversionRates
 import com.allutils.feature_currency.domain.usecase.GetFavoriteConversionRates
 import com.allutils.feature_currency.utils.Resource
@@ -19,6 +20,7 @@ import kotlinx.coroutines.launch
 internal class ConversionListViewModel(
     private val getAllConversionRatesUseCase: GetAllConversionRates,
     private val favoriteConversionRates: GetFavoriteConversionRates,
+    private val favoriteConversion: AnyFavoriteConversion
 ) : BaseViewModel<ConversionListViewModel.UiState, ConversionListViewModel.Action>(UiState.Loading) {
 
     var amount = 1.0
@@ -45,7 +47,10 @@ internal class ConversionListViewModel(
                             if (it.data?.isEmpty() == true) {
                                 Action.ConversionRatesLoadFailure
                             } else {
-                                Action.ConversionRatesLoadSuccess(it.data!!, amount)
+                                if (favoriteConversion.invoke())
+                                    Action.FavoriteConversionRatesLoadSuccess(it.data!!, amount)
+                                else
+                                    Action.LocalConversionRatesLoadSuccess(it.data!!, amount)
                             }
                         }
 
@@ -77,7 +82,7 @@ internal class ConversionListViewModel(
                         if (result.value.isEmpty()) {
                             Action.ConversionRatesLoadFailure
                         } else {
-                            Action.ConversionRatesLoadSuccess(result.value, amount)
+                            Action.FavoriteConversionRatesLoadSuccess(result.value, amount)
                         }
                     }
 
@@ -91,12 +96,20 @@ internal class ConversionListViewModel(
     }
 
     internal sealed interface Action : BaseAction<UiState> {
-        class ConversionRatesLoadSuccess(
+        class FavoriteConversionRatesLoadSuccess(
             private val conversionRates: List<ConversionRatesOutput>,
             private val amount: Double
         ) :
             Action {
-            override fun reduce(state: UiState) = UiState.Content(conversionRates, amount)
+            override fun reduce(state: UiState) = UiState.FavoriteContent(conversionRates, amount)
+        }
+
+        class LocalConversionRatesLoadSuccess(
+            private val conversionRates: List<ConversionRatesOutput>,
+            private val amount: Double
+        ) :
+            Action {
+            override fun reduce(state: UiState) = UiState.LocalContent(conversionRates, amount)
         }
 
         object ConversionRatesLoadFailure : Action {
@@ -106,7 +119,10 @@ internal class ConversionListViewModel(
 
     @Immutable
     internal sealed interface UiState : BaseState {
-        data class Content(val conversionRates: List<ConversionRatesOutput>, val amount: Double) :
+        data class FavoriteContent(val conversionRates: List<ConversionRatesOutput>, val amount: Double) :
+            UiState
+
+        data class LocalContent(val conversionRates: List<ConversionRatesOutput>, val amount: Double) :
             UiState
 
         object Loading : UiState
