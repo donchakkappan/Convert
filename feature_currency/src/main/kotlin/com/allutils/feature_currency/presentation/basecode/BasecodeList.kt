@@ -14,28 +14,22 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.allutils.base.presentation.composable.DataNotFoundAnim
 import com.allutils.base.presentation.composable.ProgressIndicator
 import com.allutils.feature_currency.domain.models.output.ConversionRatesOutput
-import com.allutils.feature_currency.presentation.ConversionListViewModel
+import com.allutils.feature_currency.presentation.AvailableCountriesViewModel
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-internal fun BasecodeList(sheetState: ModalBottomSheetState, viewModel: ConversionListViewModel) {
-    val uiState: ConversionListViewModel.UiState by viewModel.uiStateFlow.collectAsStateWithLifecycle()
+internal fun BasecodeList(sheetState: ModalBottomSheetState, countriesViewModel: AvailableCountriesViewModel) {
+    val uiState: AvailableCountriesViewModel.UiState by countriesViewModel.uiStateFlow.collectAsStateWithLifecycle()
 
     uiState.let {
         when (it) {
-            ConversionListViewModel.UiState.Error -> DataNotFoundAnim()
-            ConversionListViewModel.UiState.Loading -> ProgressIndicator()
-            is ConversionListViewModel.UiState.FavoriteContent -> BasecodeList(
+            AvailableCountriesViewModel.UiState.Error -> DataNotFoundAnim()
+            AvailableCountriesViewModel.UiState.Loading -> ProgressIndicator()
+            is AvailableCountriesViewModel.UiState.Content -> BasecodeList(
                 sheetState,
                 it.conversionRates,
-                viewModel
-            )
-
-            is ConversionListViewModel.UiState.LocalContent -> BasecodeList(
-                sheetState,
-                it.conversionRates,
-                viewModel
+                countriesViewModel
             )
         }
     }
@@ -46,7 +40,7 @@ internal fun BasecodeList(sheetState: ModalBottomSheetState, viewModel: Conversi
 internal fun BasecodeList(
     sheetState: ModalBottomSheetState,
     conversionRates: List<ConversionRatesOutput>,
-    viewModel: ConversionListViewModel? = null
+    countriesViewModel: AvailableCountriesViewModel? = null
 ) {
     val coroutineScope = rememberCoroutineScope()
     LazyColumn(
@@ -57,8 +51,8 @@ internal fun BasecodeList(
                 currency.currencyCode,
                 "https://flagsapi.com/" + currency.currencyCode.take(2) + "/shiny/64.png"
             ) {
-                viewModel?.baseCode = it
-                viewModel?.showConversionRates()
+                countriesViewModel?.baseCode = it
+                countriesViewModel?.getConversionRates()
                 coroutineScope.launch {
                     sheetState.hide()
                 }

@@ -14,7 +14,8 @@ import org.koin.core.context.loadKoinModules
 
 class ConversionListFragment : BaseFragment() {
 
-    private val model: ConversionListViewModel by viewModel()
+    private val conversionsViewModel: ConversionListViewModel by viewModel()
+    private val countriesViewModel: AvailableCountriesViewModel by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,7 +30,7 @@ class ConversionListFragment : BaseFragment() {
         return ComposeView(requireContext()).apply {
             setContent {
                 ConvertTheme {
-                    HomeScreen(model)
+                    HomeScreen(conversionsViewModel, countriesViewModel)
                 }
             }
         }
@@ -37,6 +38,7 @@ class ConversionListFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        model.showConversionRates()
+        conversionsViewModel.showConversionRates()
+        countriesViewModel.getConversionRates()
     }
 }

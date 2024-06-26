@@ -46,13 +46,15 @@ import com.allutils.app_style_guide.styles.lightestGrey
 import com.allutils.base.presentation.composable.DataNotFoundAnim
 import com.allutils.base.presentation.composable.ProgressIndicator
 import com.allutils.feature_currency.domain.models.output.ConversionRatesOutput
+import com.allutils.feature_currency.presentation.AvailableCountriesViewModel
 import com.allutils.feature_currency.presentation.ConversionListViewModel
 import com.allutils.feature_currency.presentation.basecode.BasecodeList
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-internal fun HomeScreen(viewModel: ConversionListViewModel) {
+internal fun HomeScreen(conversionsViewModel: ConversionListViewModel,
+                        countriesViewModel: AvailableCountriesViewModel) {
 
     val sheetState = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden,
@@ -60,7 +62,7 @@ internal fun HomeScreen(viewModel: ConversionListViewModel) {
 
     ModalBottomSheetLayout(
         sheetState = sheetState, sheetContent = {
-            BasecodeList(sheetState, viewModel)
+            BasecodeList(sheetState, countriesViewModel)
         }, modifier = Modifier.fillMaxSize()
     ) {
         ConstraintLayout(
@@ -81,7 +83,7 @@ internal fun HomeScreen(viewModel: ConversionListViewModel) {
                         height = Dimension.fillToConstraints
                     },
             ) {
-                HeaderCard(viewModel, sheetState)
+                HeaderCard(conversionsViewModel, sheetState)
             }
             Card(
                 shape = RoundedCornerShape(topStart = 40.dp, topEnd = 40.dp),
@@ -96,7 +98,7 @@ internal fun HomeScreen(viewModel: ConversionListViewModel) {
                         width = Dimension.fillToConstraints
                     },
             ) {
-                ConversionList(viewModel, sheetState)
+                ConversionList(conversionsViewModel, sheetState)
             }
         }
     }
