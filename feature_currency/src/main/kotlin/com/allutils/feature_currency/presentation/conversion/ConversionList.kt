@@ -4,17 +4,22 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.ModalBottomSheetLayout
 import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.rememberModalBottomSheetState
+import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -34,6 +39,7 @@ import androidx.constraintlayout.compose.Dimension
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.allutils.app_style_guide.animations.LottieAssetLoader
 import com.allutils.app_style_guide.components.NumberField
+import com.allutils.app_style_guide.styles.darkestBlack
 import com.allutils.app_style_guide.styles.darkestBlue
 import com.allutils.app_style_guide.styles.headingH4
 import com.allutils.app_style_guide.styles.lightestGrey
@@ -90,7 +96,7 @@ internal fun HomeScreen(viewModel: ConversionListViewModel) {
                         width = Dimension.fillToConstraints
                     },
             ) {
-                ConversionList(viewModel)
+                ConversionList(viewModel, sheetState)
             }
         }
     }
@@ -100,7 +106,8 @@ internal fun HomeScreen(viewModel: ConversionListViewModel) {
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 internal fun ConversionList(
-    viewModel: ConversionListViewModel
+    viewModel: ConversionListViewModel,
+    sheetState: ModalBottomSheetState
 ) {
     val uiState: ConversionListViewModel.UiState by viewModel.uiStateFlow.collectAsStateWithLifecycle()
 
@@ -110,13 +117,16 @@ internal fun ConversionList(
             ConversionListViewModel.UiState.Loading -> ProgressIndicator()
             is ConversionListViewModel.UiState.FavoriteContent -> FavoriteCurrencyListCard(
                 viewModel,
-                it.conversionRates
+                it.conversionRates,
+                sheetState
             )
 
             is ConversionListViewModel.UiState.LocalContent -> LocalCurrencyListCard(
                 viewModel,
-                it.conversionRates
+                it.conversionRates,
+                sheetState
             )
+
         }
     }
 
@@ -187,10 +197,12 @@ internal fun HeaderCard(
     }
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 internal fun FavoriteCurrencyListCard(
     viewModel: ConversionListViewModel,
-    conversionRates: List<ConversionRatesOutput>
+    conversionRates: List<ConversionRatesOutput>,
+    sheetState: ModalBottomSheetState
 ) {
     LazyColumn(
         Modifier.fillMaxWidth()
@@ -207,16 +219,20 @@ internal fun FavoriteCurrencyListCard(
     }
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 internal fun LocalCurrencyListCard(
     viewModel: ConversionListViewModel,
-    conversionRates: List<ConversionRatesOutput>
+    conversionRates: List<ConversionRatesOutput>,
+    sheetState: ModalBottomSheetState
 ) {
+    val coroutineScope = rememberCoroutineScope()
+
     ConstraintLayout(
         modifier = Modifier
             .fillMaxSize()
     ) {
-        val (localCurrency, lottie) = createRefs()
+        val (localCurrency, lottie, text, button) = createRefs()
 
         LazyColumn(
             Modifier
@@ -240,15 +256,47 @@ internal fun LocalCurrencyListCard(
 
         Column(
             modifier = Modifier
+                .offset(x = (-40).dp)
                 .constrainAs(lottie) {
                     top.linkTo(localCurrency.bottom)
                     bottom.linkTo(parent.bottom)
                     start.linkTo(parent.start)
                     height = Dimension.wrapContent
+                    width = Dimension.wrapContent
                 },
             horizontalAlignment = Alignment.Start
         ) {
             LottieAssetLoader(com.allutils.feature_currency.R.raw.hello)
+        }
+
+        Text(
+            text = "Please add your favorite currencies",
+            style = headingH4,
+            color = darkestBlack,
+            modifier = Modifier.constrainAs(text) {
+                start.linkTo(lottie.end)
+                top.linkTo(parent.top)
+                bottom.linkTo(parent.bottom)
+                end.linkTo(parent.end)
+                width = Dimension.fillToConstraints
+            }
+        )
+
+        FloatingActionButton(
+            onClick = {
+                coroutineScope.launch {
+                    sheetState.show()
+                }
+            },
+            modifier = Modifier.padding(16.dp)
+                .constrainAs(button) {
+                    bottom.linkTo(parent.bottom)
+                    end.linkTo(parent.end)
+                    height = Dimension.wrapContent
+                    width = Dimension.wrapContent
+                }
+        ) {
+            Icon(Icons.Filled.Add, contentDescription = "Add")
         }
     }
 }

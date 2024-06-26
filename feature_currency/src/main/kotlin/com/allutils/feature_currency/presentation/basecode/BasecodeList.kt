@@ -31,6 +31,7 @@ internal fun BasecodeList(sheetState: ModalBottomSheetState, viewModel: Conversi
                 it.conversionRates,
                 viewModel
             )
+
             is ConversionListViewModel.UiState.LocalContent -> BasecodeList(
                 sheetState,
                 it.conversionRates,
