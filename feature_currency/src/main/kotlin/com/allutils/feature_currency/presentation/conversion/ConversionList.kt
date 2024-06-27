@@ -53,8 +53,10 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-internal fun HomeScreen(conversionsViewModel: ConversionListViewModel,
-                        countriesViewModel: AvailableCountriesViewModel) {
+internal fun HomeScreen(
+    conversionsViewModel: ConversionListViewModel,
+    countriesViewModel: AvailableCountriesViewModel
+) {
 
     val sheetState = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden,

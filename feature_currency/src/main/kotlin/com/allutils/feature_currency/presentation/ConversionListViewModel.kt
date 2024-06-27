@@ -5,14 +5,12 @@ import androidx.lifecycle.viewModelScope
 import com.allutils.base.presentation.viewmodel.BaseAction
 import com.allutils.base.presentation.viewmodel.BaseState
 import com.allutils.base.presentation.viewmodel.BaseViewModel
-import com.allutils.base.result.Result
 import com.allutils.feature_currency.domain.models.output.ConversionRatesOutput
 import com.allutils.feature_currency.domain.usecase.AnyFavoriteConversion
 import com.allutils.feature_currency.domain.usecase.GetAllConversionRates
 import com.allutils.feature_currency.domain.usecase.GetFavoriteConversionRates
 import com.allutils.feature_currency.utils.Resource
 import com.allutils.feature_currency.utils.getLocalCurrencyCode
-import com.google.firebase.perf.metrics.AddTrace
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
