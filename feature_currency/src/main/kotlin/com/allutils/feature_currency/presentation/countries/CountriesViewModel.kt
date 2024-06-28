@@ -1,4 +1,4 @@
-package com.allutils.feature_currency.presentation
+package com.allutils.feature_currency.presentation.countries
 
 import androidx.compose.runtime.Immutable
 import androidx.lifecycle.viewModelScope
@@ -13,9 +13,9 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
-internal class AvailableCountriesViewModel(
+internal class CountriesViewModel(
     private val getAllConversionRatesUseCase: GetAllConversionRates
-) : BaseViewModel<AvailableCountriesViewModel.UiState, AvailableCountriesViewModel.Action>(UiState.Loading) {
+) : BaseViewModel<CountriesViewModel.UiState, CountriesViewModel.Action>(UiState.Loading) {
 
     var amount = 1.0
     var baseCode = "USD"
@@ -53,6 +53,12 @@ internal class AvailableCountriesViewModel(
                 }
             }
         }
+    }
+
+    fun markFavoriteItem(){
+
+
+        //conversionsViewModel.showConversionRates()
     }
 
     internal sealed interface Action : BaseAction<UiState> {

@@ -22,7 +22,6 @@ internal class CurrenciesRepositoryImpl(
     override suspend fun getConversionRates(
         baseCode: String
     ): Flow<Resource<List<ConversionRatesOutput>>> = networkBoundResource(
-        // pass in the logic to query data from the database
         query = {
             flow {
                 val localConversionRates = databaseService
@@ -32,12 +31,11 @@ internal class CurrenciesRepositoryImpl(
                 emit(localConversionRates)
             }
         },
-        // pass in the logic to fetch data from the api
+
         fetch = {
             networkService.getConversionRates(BuildConfig.GRADLE_CURRENCY_API_KEY, baseCode)
         },
 
-        //pass in the logic to save the result to the local cache
         saveFetchResult = { conversionRates ->
 
             when (conversionRates) {
@@ -60,14 +58,12 @@ internal class CurrenciesRepositoryImpl(
             }
         },
 
-        //pass in the logic to determine if the networking call should be made
         shouldFetch = { conversionRates ->
             conversionRates.isEmpty()
         }
     )
 
     override suspend fun getFavoriteConversionRates(baseCode: String): Flow<Resource<List<ConversionRatesOutput>>> = networkBoundResource(
-        // pass in the logic to query data from the database
         query = {
             flow {
                 val localConversionRates = databaseService
@@ -77,12 +73,11 @@ internal class CurrenciesRepositoryImpl(
                 emit(localConversionRates)
             }
         },
-        // pass in the logic to fetch data from the api
+
         fetch = {
             networkService.getConversionRates(BuildConfig.GRADLE_CURRENCY_API_KEY, baseCode)
         },
 
-        //pass in the logic to save the result to the local cache
         saveFetchResult = { conversionRates ->
 
             when (conversionRates) {
@@ -105,7 +100,6 @@ internal class CurrenciesRepositoryImpl(
             }
         },
 
-        //pass in the logic to determine if the networking call should be made
         shouldFetch = { conversionRates ->
             conversionRates.isEmpty()
         }
@@ -113,7 +107,6 @@ internal class CurrenciesRepositoryImpl(
 
     override suspend fun getLocalConversionRate(baseCode: String, localCurrencyCode: String): Flow<Resource<List<ConversionRatesOutput>>> =
         networkBoundResource(
-            // pass in the logic to query data from the database
             query = {
                 flow {
                     val localConversionRates = databaseService
@@ -123,12 +116,11 @@ internal class CurrenciesRepositoryImpl(
                     emit(localConversionRates)
                 }
             },
-            // pass in the logic to fetch data from the api
+
             fetch = {
                 networkService.getConversionRates(BuildConfig.GRADLE_CURRENCY_API_KEY, baseCode)
             },
 
-            //pass in the logic to save the result to the local cache
             saveFetchResult = { conversionRates ->
 
                 when (conversionRates) {
@@ -151,7 +143,6 @@ internal class CurrenciesRepositoryImpl(
                 }
             },
 
-            //pass in the logic to determine if the networking call should be made
             shouldFetch = { conversionRates ->
                 conversionRates.isEmpty()
             }
@@ -160,5 +151,48 @@ internal class CurrenciesRepositoryImpl(
     override suspend fun isThereAnyFavorite(): Boolean {
         return databaseService.hasFavoriteItem() > 0
     }
+
+    override suspend fun markFavoriteAndGetAll(baseCode: String, favoriteCode: String): Flow<Resource<List<ConversionRatesOutput>>> =
+        networkBoundResource(
+            query = {
+                flow {
+                    val localConversionRates = databaseService
+                        .getFavoriteConversionRates(baseCode = baseCode)
+                        .map { it.toDomainModel() }
+
+                    emit(localConversionRates)
+                }
+            },
+
+            fetch = {
+                networkService.getConversionRates(BuildConfig.GRADLE_CURRENCY_API_KEY, baseCode)
+            },
+
+            saveFetchResult = { conversionRates ->
+                databaseService.markAsFavoriteConversion(favoriteCode)
+                when (conversionRates) {
+                    is ApiResult.Success -> {
+                        conversionRates
+                            .data
+                            .also {
+                                databaseService.insertConversionRateMetaData(it.toMetaDataEntityModel())
+                                databaseService.insertBulkConversionRates(it.toConversionRatesEntityModel())
+                            }
+                    }
+
+                    is ApiResult.Error -> {
+
+                    }
+
+                    is ApiResult.Exception -> {
+
+                    }
+                }
+            },
+
+            shouldFetch = { conversionRates ->
+                true
+            }
+        )
 
 }

@@ -1,5 +1,6 @@
-package com.allutils.feature_currency.presentation.conversion
+package com.allutils.feature_currency.presentation.home
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -23,7 +24,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -37,6 +41,7 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.allutils.app_style_guide.R
 import com.allutils.app_style_guide.animations.LottieAssetLoader
 import com.allutils.app_style_guide.components.NumberField
 import com.allutils.app_style_guide.styles.darkestBlack
@@ -46,25 +51,55 @@ import com.allutils.app_style_guide.styles.lightestGrey
 import com.allutils.base.presentation.composable.DataNotFoundAnim
 import com.allutils.base.presentation.composable.ProgressIndicator
 import com.allutils.feature_currency.domain.models.output.ConversionRatesOutput
+import com.allutils.feature_currency.presentation.BottomSheetLayouts
+import com.allutils.feature_currency.presentation.BottomSheetType
+import com.allutils.feature_currency.presentation.basecode.BasecodeViewModel
+import com.allutils.feature_currency.presentation.conversion.CurrencyListItem
 import com.allutils.feature_currency.presentation.countries.CountriesViewModel
-import com.allutils.feature_currency.presentation.home.ConversionListViewModel
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-internal fun HomeScreen(
+internal fun CurrencyConversionHome(
     conversionsViewModel: ConversionListViewModel,
+    basecodeViewModel: BasecodeViewModel,
     countriesViewModel: CountriesViewModel
 ) {
 
+    val coroutineScope = rememberCoroutineScope()
+
+    var currentBottomSheet: BottomSheetType? by remember { mutableStateOf(null) }
+
+    @OptIn(ExperimentalMaterialApi::class)
     val sheetState = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden,
+        confirmValueChange = { it != ModalBottomSheetValue.HalfExpanded }
     )
 
-    ModalBottomSheetLayout(
-        sheetState = sheetState, sheetContent = {
+    @OptIn(ExperimentalMaterialApi::class)
+    val openSheet = { coroutineScope.launch { sheetState.show() } }
 
-        }, modifier = Modifier.fillMaxSize()
+    @OptIn(ExperimentalMaterialApi::class)
+    val closeSheet = { coroutineScope.launch { sheetState.hide() } }
+
+    BackHandler(sheetState.isVisible) { closeSheet() }
+
+    ModalBottomSheetLayout(
+        sheetState = sheetState,
+        sheetContent = {
+            currentBottomSheet?.let {
+                BottomSheetLayouts(
+                    basecodeViewModel = basecodeViewModel,
+                    countriesViewModel = countriesViewModel,
+                    conversionsViewModel = conversionsViewModel,
+                    bottomSheetType = it,
+                    sheetState = sheetState,
+                    closeSheet = { closeSheet() }
+                )
+            }
+        },
+        sheetShape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
+        modifier = Modifier.fillMaxSize()
     ) {
         ConstraintLayout(
             modifier = Modifier
@@ -84,7 +119,61 @@ internal fun HomeScreen(
                         height = Dimension.fillToConstraints
                     },
             ) {
-                HeaderCard(conversionsViewModel, sheetState)
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(30.dp)
+                ) {
+
+                    val loginText = "Convert Currency Here"
+                    val loginWord = "Convert"
+                    val loginAnnotatedString = buildAnnotatedString {
+                        append(loginText)
+                        addStyle(
+                            style = SpanStyle(
+                                color = Color.White,
+                                fontFamily = FontFamily(Font(R.font.roboto_bold))
+                            ),
+                            start = 0,
+                            end = loginText.length
+                        )
+                        addStyle(
+                            style = SpanStyle(
+                                color = Color.Black,
+                                fontFamily = FontFamily(Font(R.font.roboto_medium))
+                            ),
+                            start = 0,
+                            end = loginWord.length
+                        )
+                    }
+
+                    Text(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 10.dp, bottom = 20.dp),
+                        text = loginAnnotatedString,
+                        textAlign = TextAlign.Center,
+                        fontSize = 22.sp,
+                    )
+
+                    Row {
+                        IconButton(onClick = {
+                            currentBottomSheet = BottomSheetType.BASE_CODE_LIST
+                            openSheet()
+                        }) {
+                            Text(
+                                text = "USD",
+                                style = headingH4,
+                                color = lightestGrey
+                            )
+                        }
+
+                        NumberField("Enter amount ") {
+                            //basecodeViewModel?.amount = it.toDouble()
+                            basecodeViewModel?.loadBasecodeList()
+                        }
+                    }
+                }
             }
             Card(
                 shape = RoundedCornerShape(topStart = 40.dp, topEnd = 40.dp),
@@ -99,10 +188,73 @@ internal fun HomeScreen(
                         width = Dimension.fillToConstraints
                     },
             ) {
-                ConversionList(conversionsViewModel, sheetState)
+                val uiState: ConversionListViewModel.UiState by conversionsViewModel.uiStateFlow.collectAsStateWithLifecycle()
+
+                uiState.let {
+                    when (it) {
+                        ConversionListViewModel.UiState.Error -> DataNotFoundAnim()
+                        ConversionListViewModel.UiState.Loading -> ProgressIndicator()
+                        is ConversionListViewModel.UiState.FavoriteContent ->  {
+                            ConstraintLayout(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                            ) {
+                                val (localCurrency, button) = createRefs()
+                                LazyColumn(
+                                    Modifier
+                                        .constrainAs(localCurrency) {
+                                            top.linkTo(parent.top)
+                                            start.linkTo(parent.start)
+                                            end.linkTo(parent.end)
+                                            height = Dimension.wrapContent
+                                        }
+                                ) {
+                                    items(items = it.conversionRates, key = { it.currencyCode }) { currency ->
+                                        CurrencyListItem(
+                                            currency.baseCode,
+                                            currency.currencyCode,
+                                            currency.rate.toString(),
+                                            "https://flagsapi.com/" + currency.currencyCode.take(2) + "/shiny/64.png",
+                                            conversionsViewModel.amount ?: 1.0
+                                        )
+                                    }
+                                }
+
+                                FloatingActionButton(
+                                    onClick = {
+                                        currentBottomSheet = BottomSheetType.COUNTRIES_LIST
+                                        openSheet()
+                                    },
+                                    modifier = Modifier.padding(16.dp)
+                                        .constrainAs(button) {
+                                            bottom.linkTo(parent.bottom)
+                                            end.linkTo(parent.end)
+                                            height = Dimension.wrapContent
+                                            width = Dimension.wrapContent
+                                        }
+                                ) {
+                                    Icon(Icons.Filled.Add, contentDescription = "Add")
+                                }
+                            }
+                        }
+
+                        is ConversionListViewModel.UiState.LocalContent -> LocalCurrencyListCard(
+                            conversionsViewModel,
+                            it.conversionRates
+                        )
+
+                    }
+                }
             }
         }
     }
+}
+
+fun onShowCountriesClick() {
+
+}
+
+fun onShowBaseCodesClick() {
 
 }
 
@@ -126,8 +278,7 @@ internal fun ConversionList(
 
             is ConversionListViewModel.UiState.LocalContent -> LocalCurrencyListCard(
                 viewModel,
-                it.conversionRates,
-                sheetState
+                it.conversionRates
             )
 
         }
@@ -155,7 +306,7 @@ internal fun HeaderCard(
             addStyle(
                 style = SpanStyle(
                     color = Color.White,
-                    fontFamily = FontFamily(Font(com.allutils.app_style_guide.R.font.roboto_bold))
+                    fontFamily = FontFamily(Font(R.font.roboto_bold))
                 ),
                 start = 0,
                 end = loginText.length
@@ -163,7 +314,7 @@ internal fun HeaderCard(
             addStyle(
                 style = SpanStyle(
                     color = Color.Black,
-                    fontFamily = FontFamily(Font(com.allutils.app_style_guide.R.font.roboto_medium))
+                    fontFamily = FontFamily(Font(R.font.roboto_medium))
                 ),
                 start = 0,
                 end = loginWord.length
@@ -181,11 +332,9 @@ internal fun HeaderCard(
 
         Row {
             IconButton(onClick = {
-                coroutineScope.launch {
-                    sheetState.show()
-                }
+                onShowBaseCodesClick()
             }) {
-                androidx.compose.material3.Text(
+                Text(
                     text = viewModel?.baseCode.toString(),
                     style = headingH4,
                     color = lightestGrey
@@ -257,8 +406,7 @@ internal fun FavoriteCurrencyListCard(
 @Composable
 internal fun LocalCurrencyListCard(
     viewModel: ConversionListViewModel,
-    conversionRates: List<ConversionRatesOutput>,
-    sheetState: ModalBottomSheetState
+    conversionRates: List<ConversionRatesOutput>
 ) {
     val coroutineScope = rememberCoroutineScope()
 
@@ -318,9 +466,7 @@ internal fun LocalCurrencyListCard(
 
         FloatingActionButton(
             onClick = {
-                coroutineScope.launch {
-                    sheetState.show()
-                }
+                onShowCountriesClick()
             },
             modifier = Modifier.padding(16.dp)
                 .constrainAs(button) {
@@ -334,5 +480,4 @@ internal fun LocalCurrencyListCard(
         }
     }
 }
-
 

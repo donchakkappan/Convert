@@ -8,14 +8,18 @@ import androidx.compose.ui.platform.ComposeView
 import com.allutils.app_style_guide.theme.ConvertTheme
 import com.allutils.base.presentation.activity.BaseFragment
 import com.allutils.feature_currency.currencyModules
-import com.allutils.feature_currency.presentation.conversion.HomeScreen
+import com.allutils.feature_currency.presentation.basecode.BasecodeViewModel
+import com.allutils.feature_currency.presentation.countries.CountriesViewModel
+import com.allutils.feature_currency.presentation.home.ConversionListViewModel
+import com.allutils.feature_currency.presentation.home.CurrencyConversionHome
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.context.loadKoinModules
 
 class ConversionListFragment : BaseFragment() {
 
     private val conversionsViewModel: ConversionListViewModel by viewModel()
-    private val countriesViewModel: AvailableCountriesViewModel by viewModel()
+    private val countriesViewModel: CountriesViewModel by viewModel()
+    private val basecodeViewModel: BasecodeViewModel by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,7 +34,11 @@ class ConversionListFragment : BaseFragment() {
         return ComposeView(requireContext()).apply {
             setContent {
                 ConvertTheme {
-                    HomeScreen(conversionsViewModel, countriesViewModel)
+                    CurrencyConversionHome(
+                        conversionsViewModel,
+                        basecodeViewModel,
+                        countriesViewModel
+                    )
                 }
             }
         }

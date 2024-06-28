@@ -33,6 +33,10 @@ internal class CurrenciesRepositoryMockImpl(private val context: Context) : ICur
         TODO("Not yet implemented")
     }
 
+    override suspend fun markFavoriteAndGetAll(baseCode: String, favoriteCode: String): Flow<Resource<List<ConversionRatesOutput>>> {
+        TODO("Not yet implemented")
+    }
+
     private fun readJsonFromAssets(context: Context, fileName: String): String {
         val assetManager = context.assets
         val inputStream = assetManager.open(fileName)

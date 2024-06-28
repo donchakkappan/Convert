@@ -1,8 +1,9 @@
 package com.allutils.feature_currency.di
 
 import coil.ImageLoader
-import com.allutils.feature_currency.presentation.AvailableCountriesViewModel
-import com.allutils.feature_currency.presentation.ConversionListViewModel
+import com.allutils.feature_currency.presentation.countries.CountriesViewModel
+import com.allutils.feature_currency.presentation.home.ConversionListViewModel
+import com.allutils.feature_currency.presentation.basecode.BasecodeViewModel
 import org.koin.androidx.viewmodel.dsl.viewModelOf
 import org.koin.dsl.module
 
@@ -12,5 +13,7 @@ internal val presentationModule = module {
 
     viewModelOf(::ConversionListViewModel)
 
-    viewModelOf(::AvailableCountriesViewModel)
+    viewModelOf(::CountriesViewModel)
+
+    viewModelOf(::BasecodeViewModel)
 }
