@@ -27,6 +27,7 @@ import com.allutils.app_style_guide.templates.PlaceholderImage
 import com.allutils.base.presentation.composable.DataNotFoundAnim
 import com.allutils.base.presentation.composable.ProgressIndicator
 import com.allutils.feature_currency.domain.models.output.ConversionRatesOutput
+import com.allutils.feature_currency.presentation.home.ConversionListViewModel
 import java.math.BigDecimal
 import java.math.RoundingMode
 
@@ -34,6 +35,7 @@ import java.math.RoundingMode
 @Composable
 internal fun BasecodeBottomSheet(
     viewModel: BasecodeViewModel,
+    conversionsViewModel: ConversionListViewModel,
     closeSheet: () -> Unit
 ) {
     val uiState: BasecodeViewModel.UiState by viewModel.uiStateFlow.collectAsStateWithLifecycle()
@@ -42,14 +44,22 @@ internal fun BasecodeBottomSheet(
         when (it) {
             BasecodeViewModel.UiState.Error -> DataNotFoundAnim()
             BasecodeViewModel.UiState.Loading -> ProgressIndicator()
-            is BasecodeViewModel.UiState.Content -> BasecodeList(it.conversionRates)
+            is BasecodeViewModel.UiState.Content -> BasecodeList(
+                conversionsViewModel,
+                it.conversionRates,
+                closeSheet
+            )
         }
     }
 
 }
 
 @Composable
-internal fun BasecodeList(conversionRates: List<ConversionRatesOutput>) {
+internal fun BasecodeList(
+    conversionsViewModel: ConversionListViewModel,
+    conversionRates: List<ConversionRatesOutput>,
+    closeSheet: () -> Unit
+) {
     LazyColumn(
         Modifier.fillMaxSize()
     ) {
@@ -60,7 +70,11 @@ internal fun BasecodeList(conversionRates: List<ConversionRatesOutput>) {
                 currency.rate.toString(),
                 "https://flagsapi.com/" + currency.currencyCode.take(2) + "/shiny/64.png",
                 1.0
-            )
+            ) {
+                conversionsViewModel.baseCode = it
+                conversionsViewModel.showConversionRates()
+                closeSheet.invoke()
+            }
         }
     }
 }
@@ -71,17 +85,18 @@ internal fun BasecodeListItem(
     currencyCode: String,
     rate: String,
     countryFlag: String,
-    amount: Double
+    amount: Double,
+    onItemClick: (String) -> Unit
 ) {
 
     ConstraintLayout(
         modifier = Modifier
             .background(MaterialTheme.colorScheme.onPrimary)
             .fillMaxWidth()
-            .clickable { }
+            .clickable { onItemClick(currencyCode) }
             .padding(horizontal = 12.dp, vertical = 12.dp)
     ) {
-        val (flag, code, description, convertedRate) = createRefs()
+        val (flag, code) = createRefs()
 
         PlaceholderImage(
             url = countryFlag,
@@ -101,32 +116,9 @@ internal fun BasecodeListItem(
             color = darkestBlack,
             modifier = Modifier.constrainAs(code) {
                 start.linkTo(flag.end, 16.dp)
-                top.linkTo(flag.top, 6.dp)
-                width = Dimension.fillToConstraints
-            }
-        )
-        val formattedRate =
-            BigDecimal(rate.toDouble()).setScale(2, RoundingMode.HALF_EVEN).toString()
-        Text(
-            text = "1 $baseCode = $formattedRate $currencyCode",
-            style = bodyS,
-            color = lightBlack,
-            modifier = Modifier.constrainAs(description) {
-                start.linkTo(flag.end, 16.dp)
-                top.linkTo(code.bottom, 8.dp)
-                width = Dimension.fillToConstraints
-            }
-        )
-        val formattedNumber =
-            BigDecimal(rate.toDouble() * amount).setScale(2, RoundingMode.HALF_EVEN).toString()
-        Text(
-            text = formattedNumber,
-            style = headingH4,
-            color = darkestBlack,
-            modifier = Modifier.constrainAs(convertedRate) {
-                end.linkTo(parent.end, margin = 8.dp)
-                top.linkTo(parent.top)
+                top.linkTo(flag.top)
                 bottom.linkTo(parent.bottom)
+                width = Dimension.fillToConstraints
             }
         )
     }

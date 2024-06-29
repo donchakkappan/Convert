@@ -1,4 +1,4 @@
-package com.allutils.feature_currency.presentation.conversion
+package com.allutils.feature_currency.presentation.home
 
 import android.content.res.Configuration
 import androidx.compose.foundation.background
@@ -24,6 +24,8 @@ import com.allutils.app_style_guide.templates.PlaceholderImage
 import com.allutils.app_style_guide.theme.ConvertTheme
 import java.math.BigDecimal
 import java.math.RoundingMode
+import java.util.Currency
+import java.util.Locale
 
 @Composable
 fun CurrencyListItem(
@@ -33,6 +35,9 @@ fun CurrencyListItem(
     countryFlag: String,
     amount: Double
 ) {
+
+    val currency: Currency = Currency.getInstance(Locale.US)
+    val symbol: String = currency.symbol
 
     ConstraintLayout(
         modifier = Modifier
@@ -80,7 +85,7 @@ fun CurrencyListItem(
         val formattedNumber =
             BigDecimal(rate.toDouble() * amount).setScale(2, RoundingMode.HALF_EVEN).toString()
         Text(
-            text = formattedNumber,
+            text = "$symbol $formattedNumber",
             style = headingH4,
             color = darkestBlack,
             modifier = Modifier.constrainAs(convertedRate) {

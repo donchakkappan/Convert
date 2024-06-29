@@ -25,7 +25,7 @@ internal fun BottomSheetLayouts(
     closeSheet: () -> Unit
 ) {
     when (bottomSheetType) {
-        BottomSheetType.BASE_CODE_LIST -> BasecodeBottomSheet(basecodeViewModel, closeSheet)
+        BottomSheetType.BASE_CODE_LIST -> BasecodeBottomSheet(basecodeViewModel,conversionsViewModel!!, closeSheet)
         BottomSheetType.COUNTRIES_LIST -> CountriesBottomSheet(
             countriesViewModel = countriesViewModel,
             conversionRatesViewModel = conversionsViewModel,

@@ -48,5 +48,6 @@ class ConversionListFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
         conversionsViewModel.showConversionRates()
         countriesViewModel.getConversionRates()
+        basecodeViewModel.loadBasecodeList()
     }
 }
