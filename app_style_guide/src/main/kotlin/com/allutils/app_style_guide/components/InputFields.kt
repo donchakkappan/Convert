@@ -7,7 +7,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -24,11 +26,14 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.allutils.app_style_guide.styles.bodyM
+import com.allutils.app_style_guide.styles.darkBlue
+import com.allutils.app_style_guide.styles.lightestBlue
 import com.allutils.app_style_guide.styles.lightestGrey
 import com.allutils.app_style_guide.theme.ConvertTheme
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun NumberField(placeholder: String, modifier: Modifier = Modifier,onDone: (String) -> Unit) {
+fun NumberField(placeholder: String, modifier: Modifier = Modifier, onDone: (String) -> Unit) {
     var numberText by remember { mutableStateOf(TextFieldValue("")) }
     val keyboardController = LocalSoftwareKeyboardController.current
     OutlinedTextField(value = numberText,
@@ -36,6 +41,10 @@ fun NumberField(placeholder: String, modifier: Modifier = Modifier,onDone: (Stri
             .background(Color.Transparent)
             .fillMaxWidth().clip(RoundedCornerShape(12.dp)),
         shape = RoundedCornerShape(12.dp),
+        colors = OutlinedTextFieldDefaults.colors(
+            focusedBorderColor = darkBlue,
+            unfocusedBorderColor = darkBlue
+        ),
         maxLines = 1,
         textStyle = bodyM.copy(color = lightestGrey),
         keyboardOptions = KeyboardOptions(
@@ -60,7 +69,7 @@ fun NumberField(placeholder: String, modifier: Modifier = Modifier,onDone: (Stri
 private fun Preview_1() {
     ConvertTheme {
         Column {
-            NumberField("Enter a number"){}
+            NumberField("Enter a number") {}
         }
     }
 }
@@ -70,7 +79,7 @@ private fun Preview_1() {
 private fun Preview_2() {
     ConvertTheme {
         Column {
-            NumberField("Enter a number"){}
+            NumberField("Enter a number") {}
         }
     }
 }

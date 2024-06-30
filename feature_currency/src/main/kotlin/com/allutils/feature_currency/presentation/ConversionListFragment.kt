@@ -46,6 +46,7 @@ class ConversionListFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        conversionsViewModel.handleAction(ConversionListViewModel.MainAction.LoadPreference)
         conversionsViewModel.showConversionRates()
         countriesViewModel.getConversionRates()
         basecodeViewModel.loadBasecodeList()

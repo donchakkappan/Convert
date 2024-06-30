@@ -55,7 +55,7 @@ internal class CountriesViewModel(
         }
     }
 
-    fun markFavoriteItem(){
+    fun markFavoriteItem() {
 
 
         //conversionsViewModel.showConversionRates()

@@ -1,12 +1,15 @@
 package com.allutils.feature_currency.presentation.home
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -22,14 +25,17 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.Font
@@ -40,6 +46,7 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import coil.compose.AsyncImage
 import com.allutils.app_style_guide.R
 import com.allutils.app_style_guide.animations.LottieAssetLoader
 import com.allutils.app_style_guide.components.NumberField
@@ -49,6 +56,7 @@ import com.allutils.app_style_guide.styles.headingH4
 import com.allutils.app_style_guide.styles.lightestGrey
 import com.allutils.base.presentation.composable.DataNotFoundAnim
 import com.allutils.base.presentation.composable.ProgressIndicator
+import com.allutils.feature_currency.data.utils.CurrencyCode
 import com.allutils.feature_currency.presentation.BottomSheetLayouts
 import com.allutils.feature_currency.presentation.BottomSheetType
 import com.allutils.feature_currency.presentation.basecode.BasecodeViewModel
@@ -118,7 +126,7 @@ internal fun CurrencyConversionHome(
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(30.dp)
+                        .padding(6.dp)
                 ) {
 
                     val loginText = "Convert Currency Here"
@@ -143,6 +151,12 @@ internal fun CurrencyConversionHome(
                         )
                     }
 
+                    val state = conversionsViewModel.state.collectAsState().value
+                    val flagIcon = CurrencyCode.CURRENCIES.find { it.code.toString() == state.preferenceValue }?.flag
+                    val randomPlaceHolder by rememberSaveable {
+                        mutableStateOf(R.drawable.ic_image_placeholder)
+                    }
+
                     Text(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -152,23 +166,65 @@ internal fun CurrencyConversionHome(
                         fontSize = 22.sp,
                     )
 
-                    Row {
-                        IconButton(onClick = {
-                            currentBottomSheet = BottomSheetType.BASE_CODE_LIST
-                            openSheet()
-                        }) {
-                            Text(
-                                text = "USD",
-                                style = headingH4,
-                                color = lightestGrey
-                            )
+                    ConstraintLayout(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(Color.Transparent)
+                            .padding(horizontal = 4.dp, vertical = 4.dp)
+                    ) {
+                        val (basecode, amount) = createRefs()
+
+                        IconButton(modifier = Modifier
+                            .size(90.dp)
+                            .constrainAs(basecode) {
+                                start.linkTo(parent.start)
+                                top.linkTo(parent.top)
+                                bottom.linkTo(parent.bottom)
+                            },
+                            onClick = {
+                                currentBottomSheet = BottomSheetType.BASE_CODE_LIST
+                                openSheet()
+                            }) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.Center,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                AsyncImage(
+                                    model = flagIcon,
+                                    contentDescription = state.preferenceValue,
+                                    placeholder = painterResource(randomPlaceHolder),
+                                    modifier = Modifier
+                                        .size(36.dp)
+                                )
+                                Text(
+                                    text = state.preferenceValue,
+                                    style = headingH4,
+                                    color = lightestGrey,
+                                    modifier = Modifier
+                                        .padding(6.dp)
+                                )
+                            }
                         }
 
-                        NumberField("Enter amount ") {
+                        NumberField("Enter amount ",
+                            modifier = Modifier
+                                .size(64.dp)
+                                .constrainAs(amount) {
+                                    start.linkTo(basecode.end)
+                                    end.linkTo(parent.end)
+                                    top.linkTo(parent.top)
+                                    bottom.linkTo(parent.bottom)
+                                    width = Dimension.fillToConstraints
+                                }) {
                             conversionsViewModel.amount = it.toDouble()
                             conversionsViewModel.showConversionRates()
                             closeSheet()
                         }
+                    }
+
+                    Row {
+
                     }
                 }
             }

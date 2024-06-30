@@ -22,10 +22,9 @@ import com.allutils.app_style_guide.styles.headingH4
 import com.allutils.app_style_guide.styles.lightBlack
 import com.allutils.app_style_guide.templates.PlaceholderImage
 import com.allutils.app_style_guide.theme.ConvertTheme
+import com.allutils.feature_currency.data.utils.CurrencyCode.Companion.CURRENCIES
 import java.math.BigDecimal
 import java.math.RoundingMode
-import java.util.Currency
-import java.util.Locale
 
 @Composable
 fun CurrencyListItem(
@@ -36,9 +35,7 @@ fun CurrencyListItem(
     amount: Double
 ) {
 
-    val currency: Currency = Currency.getInstance(Locale.US)
-    val symbol: String = currency.symbol
-
+    val symbol = CURRENCIES.find { it.code.toString() == currencyCode }?.symbol
     ConstraintLayout(
         modifier = Modifier
             .background(MaterialTheme.colorScheme.onPrimary)

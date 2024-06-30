@@ -14,18 +14,25 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import coil.compose.AsyncImage
+import com.allutils.app_style_guide.R
+import com.allutils.app_style_guide.styles.bodyS
 import com.allutils.app_style_guide.styles.darkestBlack
 import com.allutils.app_style_guide.styles.headingH4
-import com.allutils.app_style_guide.templates.PlaceholderImage
+import com.allutils.app_style_guide.styles.lightBlack
 import com.allutils.base.presentation.composable.DataNotFoundAnim
 import com.allutils.base.presentation.composable.ProgressIndicator
+import com.allutils.feature_currency.data.utils.CurrencyCode
+import com.allutils.feature_currency.data.utils.CurrencyCode.Companion.CURRENCIES
 import com.allutils.feature_currency.domain.models.output.ConversionRatesOutput
 import com.allutils.feature_currency.presentation.home.ConversionListViewModel
 import kotlinx.coroutines.launch
@@ -66,15 +73,11 @@ internal fun CountriesList(
     LazyColumn(
         Modifier.fillMaxWidth()
     ) {
-        items(items = conversionRates, key = { it.currencyCode }) { currency ->
-            CountriesListItem(
-                currency.currencyCode,
-                "https://flagsapi.com/" + currency.currencyCode.take(2) + "/shiny/64.png"
-            ) {
-
-                countriesViewModel?.baseCode = it
+        items(items = CURRENCIES, key = { it.code.toString() }) { currency ->
+            CountriesListItem(currencyCode = currency) {
+                countriesViewModel?.baseCode = it.code.toString()
                 coroutineScope.launch {
-                    conversionRatesViewModel?.markFavoriteAndGetAll(favoriteCode = it)
+                    conversionRatesViewModel?.markFavoriteAndGetAll(favoriteCode = it.code.toString())
                 }
 
                 coroutineScope.launch {
@@ -83,14 +86,12 @@ internal fun CountriesList(
             }
         }
     }
-
 }
 
 @Composable
 fun CountriesListItem(
-    currencyCode: String,
-    countryFlag: String,
-    onItemClick: (String) -> Unit
+    currencyCode: CurrencyCode,
+    onItemClick: (CurrencyCode) -> Unit
 ) {
 
     ConstraintLayout(
@@ -100,12 +101,16 @@ fun CountriesListItem(
             .clickable { onItemClick(currencyCode) }
             .padding(horizontal = 12.dp, vertical = 12.dp)
     ) {
-        val (flag, code) = createRefs()
+        val (flag, code, description) = createRefs()
 
-        PlaceholderImage(
-            url = countryFlag,
-            color = Color.Transparent,
-            contentDescription = countryFlag,
+        val randomPlaceHolder by rememberSaveable {
+            mutableStateOf(R.drawable.ic_image_placeholder)
+        }
+
+        AsyncImage(
+            model = currencyCode.flag,
+            contentDescription = currencyCode.code,
+            placeholder = painterResource(randomPlaceHolder),
             modifier = Modifier
                 .size(64.dp)
                 .constrainAs(flag) {
@@ -114,14 +119,25 @@ fun CountriesListItem(
                     bottom.linkTo(parent.bottom)
                 }
         )
+
         Text(
-            text = currencyCode,
+            text = currencyCode.code.toString(),
             style = headingH4,
             color = darkestBlack,
             modifier = Modifier.constrainAs(code) {
                 start.linkTo(flag.end, 16.dp)
-                top.linkTo(flag.top)
-                bottom.linkTo(parent.bottom)
+                top.linkTo(flag.top, 6.dp)
+                width = Dimension.fillToConstraints
+            }
+        )
+
+        Text(
+            text = currencyCode.name.toString(),
+            style = bodyS,
+            color = lightBlack,
+            modifier = Modifier.constrainAs(description) {
+                start.linkTo(flag.end, 16.dp)
+                top.linkTo(code.bottom, 8.dp)
                 width = Dimension.fillToConstraints
             }
         )
