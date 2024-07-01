@@ -68,7 +68,6 @@ internal fun BasecodeList(
     ) {
         items(items = CURRENCIES, key = { it.code.toString() }) { currency ->
             BasecodeListItem(currencyCode = currency) {
-                //conversionsViewModel.baseCode = it.code.toString()
                 conversionsViewModel.showConversionRates(baseCode = it.code.toString())
                 closeSheet.invoke()
             }

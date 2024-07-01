@@ -9,6 +9,7 @@ import com.allutils.feature_currency.domain.ICurrencyPreferences
 import com.allutils.feature_currency.domain.models.output.ConversionRatesOutput
 import com.allutils.feature_currency.domain.usecase.AnyFavoriteConversion
 import com.allutils.feature_currency.domain.usecase.GetFavoriteConversionRates
+import com.allutils.feature_currency.domain.usecase.GetLastUpdatedTime
 import com.allutils.feature_currency.domain.usecase.MarkFavoriteAndGetConversionRates
 import com.allutils.feature_currency.utils.Resource
 import com.allutils.feature_currency.utils.getLocalCurrencyCode
@@ -23,6 +24,7 @@ internal class ConversionListViewModel(
     private val markFavoriteAndGetConversionRates: MarkFavoriteAndGetConversionRates,
     private val favoriteConversionRates: GetFavoriteConversionRates,
     private val favoriteConversion: AnyFavoriteConversion,
+    private val getLastUpdatedTime: GetLastUpdatedTime,
     private val currencyPreferences: ICurrencyPreferences
 ) : BaseViewModel<ConversionListViewModel.UiState, ConversionListViewModel.Action>(UiState.Loading) {
 
@@ -37,6 +39,7 @@ internal class ConversionListViewModel(
         when (action) {
             is MainAction.LoadPreference -> loadPreference()
             is MainAction.UpdatePreference -> updatePreference(action.newValue)
+            is MainAction.LoadLastUpdatedTime -> loadLastUpdatedTime()
         }
     }
 
@@ -52,6 +55,18 @@ internal class ConversionListViewModel(
         return currencyPreferences.getSelectedBasecode()
     }
 
+    private fun loadLastUpdatedTime() {
+        viewModelScope.launch {
+            _state.value = _state.value.copy(isLoading = true)
+            val lastUpdatedTime = getLastUpdatedTime()
+            _state.value = _state.value.copy(lastUpdatedTime = lastUpdatedTime, isLoading = false)
+        }
+    }
+
+    private suspend fun getLastUpdatedTime(): String {
+        return getLastUpdatedTime.invoke()
+    }
+
     private fun updatePreference(newValue: String) {
         viewModelScope.launch {
             currencyPreferences.updateBasecodeSelection(newValue)
@@ -61,11 +76,13 @@ internal class ConversionListViewModel(
 
     data class MainState(
         val preferenceValue: String = "",
+        val lastUpdatedTime: String = "",
         val isLoading: Boolean = false
     )
 
     sealed class MainAction {
         object LoadPreference : MainAction()
+        object LoadLastUpdatedTime : MainAction()
         data class UpdatePreference(val newValue: String) : MainAction()
     }
 

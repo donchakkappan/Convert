@@ -75,7 +75,6 @@ internal fun CountriesList(
     ) {
         items(items = CURRENCIES, key = { it.code.toString() }) { currency ->
             CountriesListItem(currencyCode = currency) {
-                countriesViewModel?.baseCode = it.code.toString()
                 coroutineScope.launch {
                     conversionRatesViewModel?.markFavoriteAndGetAll(favoriteCode = it.code.toString())
                 }

@@ -13,6 +13,10 @@ import com.allutils.feature_currency.utils.Resource
 import com.allutils.feature_currency.utils.networkBoundResource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.runBlocking
+import java.time.Instant
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 
 internal class CurrenciesRepositoryImpl(
     private val networkService: ConversionRatesNetworkService,
@@ -100,8 +104,8 @@ internal class CurrenciesRepositoryImpl(
             }
         },
 
-        shouldFetch = { conversionRates ->
-            conversionRates.isEmpty()
+        shouldFetch = {
+            runBlocking { it.isEmpty() || isLocalDataOld() }
         }
     )
 
@@ -156,6 +160,7 @@ internal class CurrenciesRepositoryImpl(
         networkBoundResource(
             query = {
                 flow {
+                    databaseService.markAsFavoriteConversion(favoriteCode)
                     val localConversionRates = databaseService
                         .getFavoriteConversionRates(baseCode = baseCode)
                         .map { it.toDomainModel() }
@@ -169,7 +174,6 @@ internal class CurrenciesRepositoryImpl(
             },
 
             saveFetchResult = { conversionRates ->
-                databaseService.markAsFavoriteConversion(favoriteCode)
                 when (conversionRates) {
                     is ApiResult.Success -> {
                         conversionRates
@@ -190,9 +194,31 @@ internal class CurrenciesRepositoryImpl(
                 }
             },
 
-            shouldFetch = { conversionRates ->
-                true
+            shouldFetch = {
+                runBlocking { isLocalDataOld() }
             }
         )
+
+    override suspend fun getLastUpdatedTime(): String {
+        return databaseService.getLastUpdatedTime().toFormattedLocalDateTime()
+    }
+
+    private suspend fun isLocalDataOld(): Boolean {
+        return databaseService.getLastUpdatedTime().isOlderThanADay()
+    }
+
+    private fun Long.toFormattedLocalDateTime(pattern: String = "EEE, dd MMM yyyy HH:mm:ss"): String {
+        val instant = Instant.ofEpochSecond(this)
+        val zonedDateTime = instant.atZone(ZoneId.systemDefault())
+        val formatter = DateTimeFormatter.ofPattern(pattern)
+        return zonedDateTime.format(formatter)
+    }
+
+    fun Long.isOlderThanADay(): Boolean {
+        val currentInstant = Instant.now()
+        val oneDayAgoInstant = currentInstant.minusSeconds(24 * 60 * 60)
+
+        return this < oneDayAgoInstant.epochSecond
+    }
 
 }

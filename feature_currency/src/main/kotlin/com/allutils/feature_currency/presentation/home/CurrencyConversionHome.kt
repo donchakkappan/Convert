@@ -160,7 +160,7 @@ internal fun CurrencyConversionHome(
                     Text(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(top = 10.dp, bottom = 20.dp),
+                            .padding(top = 10.dp, bottom = 4.dp),
                         text = loginAnnotatedString,
                         textAlign = TextAlign.Center,
                         fontSize = 22.sp,
@@ -172,13 +172,27 @@ internal fun CurrencyConversionHome(
                             .background(Color.Transparent)
                             .padding(horizontal = 4.dp, vertical = 4.dp)
                     ) {
-                        val (basecode, amount) = createRefs()
+                        val (lastupdated, basecode, amount) = createRefs()
+
+                        Text(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 10.dp, bottom = 4.dp, start = 6.dp)
+                                .constrainAs(lastupdated) {
+                                    start.linkTo(parent.start)
+                                    top.linkTo(parent.top)
+                                },
+                            text = "Last updated : " + state.lastUpdatedTime,
+                            textAlign = TextAlign.Start,
+                            color = lightestGrey,
+                            fontSize = 9.sp,
+                        )
 
                         IconButton(modifier = Modifier
                             .size(90.dp)
                             .constrainAs(basecode) {
                                 start.linkTo(parent.start)
-                                top.linkTo(parent.top)
+                                top.linkTo(lastupdated.bottom)
                                 bottom.linkTo(parent.bottom)
                             },
                             onClick = {
@@ -213,7 +227,7 @@ internal fun CurrencyConversionHome(
                                 .constrainAs(amount) {
                                     start.linkTo(basecode.end)
                                     end.linkTo(parent.end)
-                                    top.linkTo(parent.top)
+                                    top.linkTo(lastupdated.bottom)
                                     bottom.linkTo(parent.bottom)
                                     width = Dimension.fillToConstraints
                                 }) {
@@ -221,10 +235,6 @@ internal fun CurrencyConversionHome(
                             conversionsViewModel.showConversionRates()
                             closeSheet()
                         }
-                    }
-
-                    Row {
-
                     }
                 }
             }

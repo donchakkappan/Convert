@@ -78,4 +78,7 @@ internal interface CurrenciesDao {
 
     @Query("SELECT * FROM conversion_rate WHERE baseCode = :baseCode AND currencyCode = :currencyCode")
     suspend fun getLocalConversionRate(baseCode: String, currencyCode: String): List<ConversionRateEntity>
+
+    @Query("SELECT timeLastUpdateUnix FROM conversion_rate_metadata")
+    suspend fun getLastUpdatedTime(): Long
 }
