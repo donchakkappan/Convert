@@ -71,6 +71,9 @@ internal interface CurrenciesDao {
     suspend fun markAsFavoriteConversion(currencyCode: String)
 
     @Query("UPDATE conversion_rate SET isFavorite = 0 WHERE currencyCode = :currencyCode")
+    suspend fun unmarkAsFavoriteConversion(currencyCode: String)
+
+    @Query("UPDATE conversion_rate SET isFavorite = 0 WHERE currencyCode = :currencyCode")
     suspend fun deleteFavoriteConversion(currencyCode: String)
 
     @Query("SELECT COUNT(*) FROM conversion_rate WHERE isFavorite = 1")
@@ -79,6 +82,6 @@ internal interface CurrenciesDao {
     @Query("SELECT * FROM conversion_rate WHERE baseCode = :baseCode AND currencyCode = :currencyCode")
     suspend fun getLocalConversionRate(baseCode: String, currencyCode: String): List<ConversionRateEntity>
 
-    @Query("SELECT timeLastUpdateUnix FROM conversion_rate_metadata")
-    suspend fun getLastUpdatedTime(): Long
+    @Query("SELECT timeLastUpdateUnix FROM conversion_rate_metadata WHERE baseCode = :baseCode")
+    suspend fun getLastUpdatedTime(baseCode: String): Long
 }

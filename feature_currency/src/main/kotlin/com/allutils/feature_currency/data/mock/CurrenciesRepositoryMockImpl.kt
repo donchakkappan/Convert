@@ -37,7 +37,11 @@ internal class CurrenciesRepositoryMockImpl(private val context: Context) : ICur
         TODO("Not yet implemented")
     }
 
-    override suspend fun getLastUpdatedTime(): String {
+    override suspend fun unmarkFavoriteAndGetAll(baseCode: String, favoriteCode: String): Flow<Resource<List<ConversionRatesOutput>>> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun getLastUpdatedTime(baseCode: String): String {
         TODO("Not yet implemented")
     }
 

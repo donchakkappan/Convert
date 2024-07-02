@@ -1,6 +1,7 @@
 package com.allutils.feature_currency.di
 
 import com.allutils.feature_currency.domain.usecase.AnyFavoriteConversion
+import com.allutils.feature_currency.domain.usecase.DeleteFavoriteConversion
 import com.allutils.feature_currency.domain.usecase.GetAllConversionRates
 import com.allutils.feature_currency.domain.usecase.GetFavoriteConversionRates
 import com.allutils.feature_currency.domain.usecase.GetLastUpdatedTime
@@ -19,4 +20,6 @@ internal val domainModule = module {
     singleOf(::MarkFavoriteAndGetConversionRates)
 
     singleOf(::GetLastUpdatedTime)
+
+    singleOf(::DeleteFavoriteConversion)
 }

@@ -16,5 +16,7 @@ internal interface ICurrenciesRepository {
 
     suspend fun markFavoriteAndGetAll(baseCode: String, favoriteCode: String): Flow<Resource<List<ConversionRatesOutput>>>
 
-    suspend fun getLastUpdatedTime(): String
+    suspend fun unmarkFavoriteAndGetAll(baseCode: String, favoriteCode: String): Flow<Resource<List<ConversionRatesOutput>>>
+
+    suspend fun getLastUpdatedTime(baseCode: String): String
 }

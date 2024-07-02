@@ -3,6 +3,7 @@ package com.allutils.feature_currency.presentation.home
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -14,12 +15,17 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
+import androidx.compose.material.DismissDirection
+import androidx.compose.material.DismissValue
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.ModalBottomSheetLayout
 import androidx.compose.material.ModalBottomSheetValue
+import androidx.compose.material.SwipeToDismiss
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.rememberDismissState
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -289,12 +295,48 @@ internal fun CurrencyConversionHome(
                                         }
                                 ) {
                                     items(items = it.conversionRates, key = { it.currencyCode }) { currency ->
-                                        CurrencyListItem(
-                                            currency.baseCode,
-                                            currency.currencyCode,
-                                            currency.rate.toString(),
-                                            "https://flagsapi.com/" + currency.currencyCode.take(2) + "/shiny/64.png",
-                                            conversionsViewModel.amount ?: 1.0
+                                        val state = rememberDismissState(
+                                            confirmStateChange = {
+                                                if (it == DismissValue.DismissedToStart) {
+                                                    conversionsViewModel.deleteFavoriteAndGetAll(currency.currencyCode)
+                                                }
+                                                true
+                                            }
+                                        )
+
+                                        SwipeToDismiss(
+                                            state = state,
+                                            background = {
+                                                val color = when (state.dismissDirection) {
+                                                    DismissDirection.StartToEnd -> Color.Transparent
+                                                    DismissDirection.EndToStart -> Color.Red
+                                                    null -> Color.Transparent
+                                                }
+
+                                                Box(
+                                                    modifier = Modifier
+                                                        .fillMaxSize()
+                                                        .background(color = color)
+                                                        .padding(8.dp)
+                                                ) {
+                                                    androidx.compose.material.Icon(
+                                                        imageVector = Icons.Default.Delete,
+                                                        contentDescription = "Delete",
+                                                        tint = Color.White,
+                                                        modifier = Modifier.align(Alignment.CenterEnd)
+                                                    )
+                                                }
+                                            },
+                                            dismissContent = {
+                                                CurrencyListItem(
+                                                    currency.baseCode,
+                                                    currency.currencyCode,
+                                                    currency.rate.toString(),
+                                                    "https://flagsapi.com/" + currency.currencyCode.take(2) + "/shiny/64.png",
+                                                    conversionsViewModel.amount ?: 1.0
+                                                )
+                                            },
+                                            directions = setOf(DismissDirection.EndToStart)
                                         )
                                     }
                                 }

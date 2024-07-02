@@ -8,6 +8,7 @@ import com.allutils.base.presentation.viewmodel.BaseViewModel
 import com.allutils.feature_currency.domain.ICurrencyPreferences
 import com.allutils.feature_currency.domain.models.output.ConversionRatesOutput
 import com.allutils.feature_currency.domain.usecase.AnyFavoriteConversion
+import com.allutils.feature_currency.domain.usecase.DeleteFavoriteConversion
 import com.allutils.feature_currency.domain.usecase.GetFavoriteConversionRates
 import com.allutils.feature_currency.domain.usecase.GetLastUpdatedTime
 import com.allutils.feature_currency.domain.usecase.MarkFavoriteAndGetConversionRates
@@ -24,6 +25,7 @@ internal class ConversionListViewModel(
     private val markFavoriteAndGetConversionRates: MarkFavoriteAndGetConversionRates,
     private val favoriteConversionRates: GetFavoriteConversionRates,
     private val favoriteConversion: AnyFavoriteConversion,
+    private val deleteFavoriteConversion: DeleteFavoriteConversion,
     private val getLastUpdatedTime: GetLastUpdatedTime,
     private val currencyPreferences: ICurrencyPreferences
 ) : BaseViewModel<ConversionListViewModel.UiState, ConversionListViewModel.Action>(UiState.Loading) {
@@ -58,13 +60,13 @@ internal class ConversionListViewModel(
     private fun loadLastUpdatedTime() {
         viewModelScope.launch {
             _state.value = _state.value.copy(isLoading = true)
-            val lastUpdatedTime = getLastUpdatedTime()
+            val lastUpdatedTime = getLastUpdatedTime(getPreferenceValue())
             _state.value = _state.value.copy(lastUpdatedTime = lastUpdatedTime, isLoading = false)
         }
     }
 
-    private suspend fun getLastUpdatedTime(): String {
-        return getLastUpdatedTime.invoke()
+    private suspend fun getLastUpdatedTime(baseCode: String): String {
+        return getLastUpdatedTime.invoke(baseCode)
     }
 
     private fun updatePreference(newValue: String) {
@@ -141,6 +143,43 @@ internal class ConversionListViewModel(
         job = viewModelScope.launch {
             val baseCode = _state.value.preferenceValue
             markFavoriteAndGetConversionRates.invoke(baseCode, favoriteCode).also { result ->
+                result.collectLatest {
+                    val action = when (it) {
+                        is Resource.Loading -> {
+                            Action.ConversionRatesLoading
+                        }
+
+                        is Resource.Success -> {
+                            if (it.data?.isEmpty() == true) {
+                                Action.ConversionRatesLoadFailure
+                            } else {
+                                if (favoriteConversion.invoke())
+                                    Action.FavoriteConversionRatesLoadSuccess(it.data!!, amount)
+                                else
+                                    Action.LocalConversionRatesLoadSuccess(it.data!!, amount)
+                            }
+                        }
+
+                        is Resource.Error -> {
+                            Action.ConversionRatesLoadFailure
+                        }
+                    }
+                    sendAction(action)
+                }
+            }
+        }
+    }
+
+    fun deleteFavoriteAndGetAll(favoriteCode: String) {
+
+        if (job != null) {
+            job?.cancel()
+            job = null
+        }
+
+        job = viewModelScope.launch {
+            val baseCode = _state.value.preferenceValue
+            deleteFavoriteConversion.invoke(baseCode, favoriteCode).also { result ->
                 result.collectLatest {
                     val action = when (it) {
                         is Resource.Loading -> {

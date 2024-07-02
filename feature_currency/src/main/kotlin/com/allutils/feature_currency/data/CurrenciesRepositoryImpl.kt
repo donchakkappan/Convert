@@ -105,7 +105,7 @@ internal class CurrenciesRepositoryImpl(
         },
 
         shouldFetch = {
-            runBlocking { it.isEmpty() || isLocalDataOld() }
+            runBlocking { it.isEmpty() || isLocalDataOld(baseCode) }
         }
     )
 
@@ -195,16 +195,26 @@ internal class CurrenciesRepositoryImpl(
             },
 
             shouldFetch = {
-                runBlocking { isLocalDataOld() }
+                runBlocking { isLocalDataOld(baseCode) }
             }
         )
 
-    override suspend fun getLastUpdatedTime(): String {
-        return databaseService.getLastUpdatedTime().toFormattedLocalDateTime()
+    override suspend fun unmarkFavoriteAndGetAll(baseCode: String, favoriteCode: String): Flow<Resource<List<ConversionRatesOutput>>> =
+        flow {
+            databaseService.unmarkAsFavoriteConversion(favoriteCode)
+            val localConversionRates = databaseService
+                .getFavoriteConversionRates(baseCode = baseCode)
+                .map { it.toDomainModel() }
+
+            emit(Resource.Success(localConversionRates))
+        }
+
+    override suspend fun getLastUpdatedTime(baseCode: String): String {
+        return databaseService.getLastUpdatedTime(baseCode).toFormattedLocalDateTime()
     }
 
-    private suspend fun isLocalDataOld(): Boolean {
-        return databaseService.getLastUpdatedTime().isOlderThanADay()
+    private suspend fun isLocalDataOld(baseCode: String): Boolean {
+        return databaseService.getLastUpdatedTime(baseCode).isOlderThanADay()
     }
 
     private fun Long.toFormattedLocalDateTime(pattern: String = "EEE, dd MMM yyyy HH:mm:ss"): String {
@@ -214,7 +224,7 @@ internal class CurrenciesRepositoryImpl(
         return zonedDateTime.format(formatter)
     }
 
-    fun Long.isOlderThanADay(): Boolean {
+    private fun Long.isOlderThanADay(): Boolean {
         val currentInstant = Instant.now()
         val oneDayAgoInstant = currentInstant.minusSeconds(24 * 60 * 60)
 
