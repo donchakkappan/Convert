@@ -49,6 +49,7 @@ dependencies {
 
     api(libs.gson)
     api(libs.datastorePreferences)
+    api(libs.composeCharts)
 
     api(platform(libs.firebaseBOM))
     api(libs.firebaseAnalytics)

@@ -23,6 +23,7 @@ firebaseBOMVer = "33.1.0"
 kotlinCompilerExtensionVersion = "1.5.4"
 verLeakCanary = "2.14"
 verDatastorePreferences="1.0.0"
+verCharts = "0.2.4-alpha"
 
 compileSdk = "34"
 targetSdk = "34"
@@ -140,6 +141,7 @@ firebasePerformance = { module = "com.google.firebase:firebase-perf" }
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 leakCanary = { module = "com.squareup.leakcanary:leakcanary-android", version.ref = "verLeakCanary" }
 datastorePreferences = { module = "androidx.datastore:datastore-preferences", version.ref = "verDatastorePreferences" }
+composeCharts = { module = "com.github.tehras:charts", version.ref = "verCharts" }
 
 # Test dependencies
 junit = { module = "junit:junit", version.ref = "junit" }
