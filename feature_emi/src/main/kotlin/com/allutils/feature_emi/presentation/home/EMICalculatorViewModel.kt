@@ -1,38 +1,52 @@
 package com.allutils.feature_emi.presentation.home
 
-import androidx.compose.runtime.Immutable
-import com.allutils.base.presentation.viewmodel.BaseAction
-import com.allutils.base.presentation.viewmodel.BaseState
+import androidx.lifecycle.viewModelScope
 import com.allutils.base.presentation.viewmodel.BaseViewModel
+import com.allutils.feature_emi.domain.models.EmiDetailsInput
+import com.allutils.feature_emi.domain.models.EmiDetailsOutput
+import com.allutils.feature_emi.domain.usecase.GetEmiDetails
+import com.allutils.feature_emi.presentation.home.model.EmiIntents
+import com.allutils.feature_emi.presentation.home.model.EmiResults
+import com.allutils.feature_emi.presentation.home.model.EmiViewState
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 
-internal class EMICalculatorViewModel() : BaseViewModel<EMICalculatorViewModel.UiState, EMICalculatorViewModel.Action>(UiState.Loading) {
+internal class EMICalculatorViewModel(private val getEmiDetails: GetEmiDetails) :
+    BaseViewModel<EmiViewState, EmiResults>(EmiViewState.EmiDetailsInitialContent) {
 
-    internal sealed interface Action : BaseAction<UiState> {
-        class LoadSuccess(
-            private val amount: Double
-        ) :
-            Action {
-            override fun reduce(state: UiState) = UiState.FavoriteContent(amount)
-        }
+    private var job: Job? = null
 
-        object LoadFailure : Action {
-            override fun reduce(state: UiState) = UiState.Error
-        }
+    fun processIntent(intent: EmiIntents) {
+        when (intent) {
+            is EmiIntents.CalculateEMIDetails -> getEMIDetails(intent.emiDetailsInput)
 
-        object Loading : Action {
-            override fun reduce(state: UiState) = UiState.Loading
+            EmiIntents.LoadInitialValues -> {
+                sendAction(EmiResults.EmiDetailsInitialContentSuccess)
+            }
+
+            is EmiIntents.UserUpdates -> {
+                sendAction(EmiResults.UserUpdateSuccess(getUserUpdates(intent.principle)))
+            }
         }
     }
 
-    @Immutable
-    internal sealed interface UiState : BaseState {
-        data class FavoriteContent(val amount: Double) :
-            UiState
+    private fun getUserUpdates(principal: String) = EmiDetailsOutput(
+        principal = principal,
+        interest = principal,
+        tenure = principal,
+        emi = principal
+    )
 
-        data class LocalContent(val amount: Double) :
-            UiState
+    private fun getEMIDetails(emiDetailsInput: EmiDetailsInput) {
+        if (job != null) {
+            job?.cancel()
+            job = null
+        }
 
-        object Loading : UiState
-        object Error : UiState
+        job = viewModelScope.launch {
+            val emiDetails = getEmiDetails.invoke(emiDetailsInput)
+            sendAction(EmiResults.EmiDetailsSuccess(emiDetails))
+        }
     }
+
 }

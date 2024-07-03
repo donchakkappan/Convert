@@ -1,4 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="title_feature_emi">EMI</string>
+
+    <string name="label_principle">Principle</string>
+    <string name="label_interest">Interest</string>
+    <string name="label_tenure">Tenure</string>
+    <string name="label_EMI">EMI</string>
+    <string name="button_calculate">Calculate</string>
 </resources>
