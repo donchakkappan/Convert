@@ -53,7 +53,7 @@ internal fun EMICalculatorHome(emiCalculatorViewModel: EMICalculatorViewModel) {
         modifier = Modifier
             .fillMaxSize()
     ) {
-        val guideline1 = createGuidelineFromTop(0.45f)
+        val guideline1 = createGuidelineFromTop(0.50f)
         val guideline2 = createGuidelineFromTop(0.55f)
         val (image, loginForm) = createRefs()
 
@@ -165,12 +165,12 @@ internal fun EMICalculatorHome(emiCalculatorViewModel: EMICalculatorViewModel) {
         ) {
 
             val uiState: EmiViewState by emiCalculatorViewModel.uiStateFlow.collectAsStateWithLifecycle()
-            var nameText by remember { mutableStateOf(TextFieldValue()) }
-            var cardNumber by remember { mutableStateOf(TextFieldValue()) }
-            var expiryNumber by remember { mutableStateOf(TextFieldValue()) }
-            var cvcNumber by remember { mutableStateOf(TextFieldValue()) }
+            var principleField by remember { mutableStateOf(TextFieldValue()) }
+            var interestField by remember { mutableStateOf(TextFieldValue()) }
+            var tenureField by remember { mutableStateOf(TextFieldValue()) }
+            var emiField by remember { mutableStateOf(TextFieldValue()) }
 
-            uiState.let {emi->
+            uiState.let { emi ->
                 when (emi) {
                     is EmiViewState.EmiDetailsContent -> {
 
@@ -182,18 +182,18 @@ internal fun EMICalculatorHome(emiCalculatorViewModel: EMICalculatorViewModel) {
                             item {
                                 InputItem(
                                     textFieldValue = TextFieldValue(
-                                        emi.emiDetails.principal.toString(),
-                                        selection = TextRange(emi.emiDetails.principal.toString().length)
+                                        emi.emiDetails.principal,
+                                        selection = TextRange(emi.emiDetails.principal.length)
                                     ),
-                                    label = stringResource(id = com.allutils.feature_emi.R.string.label_principle),
-                                    keyboardType = KeyboardType.Number,
                                     onTextChanged = {
-                                        nameText = it
+                                        principleField = it
 
                                         emiCalculatorViewModel.processIntent(
-                                            EmiIntents.UserUpdates(nameText.text)
+                                            EmiIntents.UserUpdates(principleField.text)
                                         )
                                     },
+                                    label = stringResource(id = com.allutils.feature_emi.R.string.label_principle),
+                                    keyboardType = KeyboardType.Number,
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .padding(vertical = 4.dp)
@@ -203,12 +203,18 @@ internal fun EMICalculatorHome(emiCalculatorViewModel: EMICalculatorViewModel) {
                             item {
                                 InputItem(
                                     textFieldValue = TextFieldValue(
-                                        emi.emiDetails.interest.toString(),
-                                        selection = TextRange(emi.emiDetails.interest.toString().length)
+                                        emi.emiDetails.interest,
+                                        selection = TextRange(emi.emiDetails.interest.length)
                                     ),
+                                    onTextChanged = {
+                                        interestField = it
+
+                                        emiCalculatorViewModel.processIntent(
+                                            EmiIntents.UserUpdates(interestField.text)
+                                        )
+                                    },
                                     label = stringResource(id = com.allutils.feature_emi.R.string.label_interest),
                                     keyboardType = KeyboardType.Number,
-                                    onTextChanged = { cardNumber = it },
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .padding(vertical = 4.dp)
@@ -223,19 +229,37 @@ internal fun EMICalculatorHome(emiCalculatorViewModel: EMICalculatorViewModel) {
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     InputItem(
-                                        textFieldValue = expiryNumber,
+                                        textFieldValue = TextFieldValue(
+                                            emi.emiDetails.tenure,
+                                            selection = TextRange(emi.emiDetails.tenure.length)
+                                        ),
+                                        onTextChanged = {
+                                            tenureField = it
+
+                                            emiCalculatorViewModel.processIntent(
+                                                EmiIntents.UserUpdates(tenureField.text)
+                                            )
+                                        },
                                         label = stringResource(id = com.allutils.feature_emi.R.string.label_tenure),
                                         keyboardType = KeyboardType.Number,
-                                        onTextChanged = { expiryNumber = it },
                                         modifier = Modifier
                                             .weight(1f)
                                             .padding(end = 8.dp)
                                     )
                                     InputItem(
-                                        textFieldValue = cvcNumber,
+                                        textFieldValue = TextFieldValue(
+                                            emi.emiDetails.emi,
+                                            selection = TextRange(emi.emiDetails.emi.length)
+                                        ),
+                                        onTextChanged = {
+                                            emiField = it
+
+                                            emiCalculatorViewModel.processIntent(
+                                                EmiIntents.UserUpdates(emiField.text)
+                                            )
+                                        },
                                         label = stringResource(id = com.allutils.feature_emi.R.string.label_EMI),
                                         keyboardType = KeyboardType.Number,
-                                        onTextChanged = { cvcNumber = it },
                                         modifier = Modifier
                                             .weight(1f)
                                             .padding(start = 8.dp)
@@ -249,10 +273,10 @@ internal fun EMICalculatorHome(emiCalculatorViewModel: EMICalculatorViewModel) {
                                         emiCalculatorViewModel.processIntent(
                                             EmiIntents.CalculateEMIDetails(
                                                 EmiDetailsInput(
-                                                    principal = nameText.text.toDouble(),
-                                                    interest = cardNumber.text.toDouble(),
-                                                    tenure = expiryNumber.text.toDouble(),
-                                                    emi = cvcNumber.text.toDouble()
+                                                    principal = principleField.text.toDoubleOrNull(),
+                                                    interest = interestField.text.toDoubleOrNull(),
+                                                    tenure = tenureField.text.toDoubleOrNull(),
+                                                    emi = emiField.text.toDoubleOrNull()
                                                 )
                                             )
                                         )
@@ -278,10 +302,10 @@ internal fun EMICalculatorHome(emiCalculatorViewModel: EMICalculatorViewModel) {
                         ) {
                             item {
                                 InputItem(
-                                    textFieldValue = nameText,
+                                    textFieldValue = principleField,
                                     label = stringResource(id = com.allutils.feature_emi.R.string.label_principle),
                                     keyboardType = KeyboardType.Number,
-                                    onTextChanged = { nameText = it },
+                                    onTextChanged = { principleField = it },
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .padding(vertical = 4.dp)
@@ -290,10 +314,10 @@ internal fun EMICalculatorHome(emiCalculatorViewModel: EMICalculatorViewModel) {
 
                             item {
                                 InputItem(
-                                    textFieldValue = cardNumber,
+                                    textFieldValue = interestField,
                                     label = stringResource(id = com.allutils.feature_emi.R.string.label_interest),
                                     keyboardType = KeyboardType.Number,
-                                    onTextChanged = { cardNumber = it },
+                                    onTextChanged = { interestField = it },
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .padding(vertical = 4.dp)
@@ -308,19 +332,19 @@ internal fun EMICalculatorHome(emiCalculatorViewModel: EMICalculatorViewModel) {
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     InputItem(
-                                        textFieldValue = expiryNumber,
+                                        textFieldValue = tenureField,
                                         label = stringResource(id = com.allutils.feature_emi.R.string.label_tenure),
                                         keyboardType = KeyboardType.Number,
-                                        onTextChanged = { expiryNumber = it },
+                                        onTextChanged = { tenureField = it },
                                         modifier = Modifier
                                             .weight(1f)
                                             .padding(end = 8.dp)
                                     )
                                     InputItem(
-                                        textFieldValue = cvcNumber,
+                                        textFieldValue = emiField,
                                         label = stringResource(id = com.allutils.feature_emi.R.string.label_EMI),
                                         keyboardType = KeyboardType.Number,
-                                        onTextChanged = { cvcNumber = it },
+                                        onTextChanged = { emiField = it },
                                         modifier = Modifier
                                             .weight(1f)
                                             .padding(start = 8.dp)
@@ -334,10 +358,10 @@ internal fun EMICalculatorHome(emiCalculatorViewModel: EMICalculatorViewModel) {
                                         emiCalculatorViewModel.processIntent(
                                             EmiIntents.CalculateEMIDetails(
                                                 EmiDetailsInput(
-                                                    principal = nameText.text.toDouble(),
-                                                    interest = cardNumber.text.toDouble(),
-                                                    tenure = expiryNumber.text.toDouble(),
-                                                    emi = cvcNumber.text.toDouble()
+                                                    principal = principleField.text.toDoubleOrNull(),
+                                                    interest = interestField.text.toDoubleOrNull(),
+                                                    tenure = tenureField.text.toDoubleOrNull(),
+                                                    emi = emiField.text.toDoubleOrNull()
                                                 )
                                             )
                                         )
@@ -364,18 +388,18 @@ internal fun EMICalculatorHome(emiCalculatorViewModel: EMICalculatorViewModel) {
                             item {
                                 InputItem(
                                     textFieldValue = TextFieldValue(
-                                        emi.emiDetails.principal.toString(),
-                                        selection = TextRange(emi.emiDetails.principal.toString().length)
+                                        emi.emiDetails.principal,
+                                        selection = TextRange(emi.emiDetails.principal.length)
                                     ),
-                                    label = stringResource(id = com.allutils.feature_emi.R.string.label_principle),
-                                    keyboardType = KeyboardType.Number,
                                     onTextChanged = {
-                                        nameText = it
+                                        principleField = it
 
                                         emiCalculatorViewModel.processIntent(
-                                            EmiIntents.UserUpdates(nameText.text)
+                                            EmiIntents.UserUpdates(principleField.text)
                                         )
                                     },
+                                    label = stringResource(id = com.allutils.feature_emi.R.string.label_principle),
+                                    keyboardType = KeyboardType.Number,
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .padding(vertical = 4.dp)
@@ -385,12 +409,18 @@ internal fun EMICalculatorHome(emiCalculatorViewModel: EMICalculatorViewModel) {
                             item {
                                 InputItem(
                                     textFieldValue = TextFieldValue(
-                                        emi.emiDetails.interest.toString(),
-                                        selection = TextRange(emi.emiDetails.interest.toString().length)
+                                        emi.emiDetails.interest,
+                                        selection = TextRange(emi.emiDetails.interest.length)
                                     ),
+                                    onTextChanged = {
+                                        interestField = it
+
+                                        emiCalculatorViewModel.processIntent(
+                                            EmiIntents.UserUpdates(interestField.text)
+                                        )
+                                    },
                                     label = stringResource(id = com.allutils.feature_emi.R.string.label_interest),
                                     keyboardType = KeyboardType.Number,
-                                    onTextChanged = { cardNumber = it },
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .padding(vertical = 4.dp)
@@ -405,19 +435,37 @@ internal fun EMICalculatorHome(emiCalculatorViewModel: EMICalculatorViewModel) {
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     InputItem(
-                                        textFieldValue = expiryNumber,
+                                        textFieldValue = TextFieldValue(
+                                            emi.emiDetails.tenure,
+                                            selection = TextRange(emi.emiDetails.tenure.length)
+                                        ),
+                                        onTextChanged = {
+                                            tenureField = it
+
+                                            emiCalculatorViewModel.processIntent(
+                                                EmiIntents.UserUpdates(tenureField.text)
+                                            )
+                                        },
                                         label = stringResource(id = com.allutils.feature_emi.R.string.label_tenure),
                                         keyboardType = KeyboardType.Number,
-                                        onTextChanged = { expiryNumber = it },
                                         modifier = Modifier
                                             .weight(1f)
                                             .padding(end = 8.dp)
                                     )
                                     InputItem(
-                                        textFieldValue = cvcNumber,
+                                        textFieldValue = TextFieldValue(
+                                            emi.emiDetails.emi,
+                                            selection = TextRange(emi.emiDetails.emi.length)
+                                        ),
+                                        onTextChanged = {
+                                            emiField = it
+
+                                            emiCalculatorViewModel.processIntent(
+                                                EmiIntents.UserUpdates(emiField.text)
+                                            )
+                                        },
                                         label = stringResource(id = com.allutils.feature_emi.R.string.label_EMI),
                                         keyboardType = KeyboardType.Number,
-                                        onTextChanged = { cvcNumber = it },
                                         modifier = Modifier
                                             .weight(1f)
                                             .padding(start = 8.dp)
@@ -431,10 +479,10 @@ internal fun EMICalculatorHome(emiCalculatorViewModel: EMICalculatorViewModel) {
                                         emiCalculatorViewModel.processIntent(
                                             EmiIntents.CalculateEMIDetails(
                                                 EmiDetailsInput(
-                                                    principal = nameText.text.toDouble(),
-                                                    interest = cardNumber.text.toDouble(),
-                                                    tenure = expiryNumber.text.toDouble(),
-                                                    emi = cvcNumber.text.toDouble()
+                                                    principal = principleField.text.toDoubleOrNull(),
+                                                    interest = interestField.text.toDoubleOrNull(),
+                                                    tenure = tenureField.text.toDoubleOrNull(),
+                                                    emi = emiField.text.toDoubleOrNull()
                                                 )
                                             )
                                         )

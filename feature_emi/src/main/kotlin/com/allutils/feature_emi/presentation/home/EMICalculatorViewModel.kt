@@ -30,11 +30,16 @@ internal class EMICalculatorViewModel(private val getEmiDetails: GetEmiDetails) 
         }
     }
 
-    private fun getUserUpdates(principal: String) = EmiDetailsOutput(
-        principal = principal,
-        interest = principal,
-        tenure = principal,
-        emi = principal
+    private fun getUserUpdates(
+        principle: String? = null,
+        interest: String? = null,
+        tenure: String? = null,
+        emi: String? = null
+    ) = EmiDetailsOutput(
+        principal = principle ?: "",
+        interest = interest ?: "",
+        tenure = tenure ?: "",
+        emi = emi ?: ""
     )
 
     private fun getEMIDetails(emiDetailsInput: EmiDetailsInput) {
