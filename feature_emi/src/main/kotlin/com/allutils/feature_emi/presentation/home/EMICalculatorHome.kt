@@ -165,136 +165,19 @@ internal fun EMICalculatorHome(emiCalculatorViewModel: EMICalculatorViewModel) {
         ) {
 
             val uiState: EmiViewState by emiCalculatorViewModel.uiStateFlow.collectAsStateWithLifecycle()
+
             var principleField by remember { mutableStateOf(TextFieldValue()) }
             var interestField by remember { mutableStateOf(TextFieldValue()) }
             var tenureField by remember { mutableStateOf(TextFieldValue()) }
             var emiField by remember { mutableStateOf(TextFieldValue()) }
 
+            val currencyVisualTransformation = rememberCurrencyVisualTransformation(currency = "INR")
+            val MAX_VALUE = 10000
+
             uiState.let { emi ->
                 when (emi) {
-                    is EmiViewState.EmiDetailsContent -> {
 
-                        LazyColumn(
-                            modifier = Modifier
-                                .padding(16.dp)
-                                .fillMaxWidth()
-                        ) {
-                            item {
-                                InputItem(
-                                    textFieldValue = TextFieldValue(
-                                        emi.emiDetails.principal,
-                                        selection = TextRange(emi.emiDetails.principal.length)
-                                    ),
-                                    onTextChanged = {
-                                        principleField = it
-
-                                        emiCalculatorViewModel.processIntent(
-                                            EmiIntents.UserUpdates(principleField.text)
-                                        )
-                                    },
-                                    label = stringResource(id = com.allutils.feature_emi.R.string.label_principle),
-                                    keyboardType = KeyboardType.Number,
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(vertical = 4.dp)
-                                )
-                            }
-
-                            item {
-                                InputItem(
-                                    textFieldValue = TextFieldValue(
-                                        emi.emiDetails.interest,
-                                        selection = TextRange(emi.emiDetails.interest.length)
-                                    ),
-                                    onTextChanged = {
-                                        interestField = it
-
-                                        emiCalculatorViewModel.processIntent(
-                                            EmiIntents.UserUpdates(interestField.text)
-                                        )
-                                    },
-                                    label = stringResource(id = com.allutils.feature_emi.R.string.label_interest),
-                                    keyboardType = KeyboardType.Number,
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(vertical = 4.dp)
-                                )
-                            }
-
-                            item {
-                                Row(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(vertical = 4.dp),
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    InputItem(
-                                        textFieldValue = TextFieldValue(
-                                            emi.emiDetails.tenure,
-                                            selection = TextRange(emi.emiDetails.tenure.length)
-                                        ),
-                                        onTextChanged = {
-                                            tenureField = it
-
-                                            emiCalculatorViewModel.processIntent(
-                                                EmiIntents.UserUpdates(tenureField.text)
-                                            )
-                                        },
-                                        label = stringResource(id = com.allutils.feature_emi.R.string.label_tenure),
-                                        keyboardType = KeyboardType.Number,
-                                        modifier = Modifier
-                                            .weight(1f)
-                                            .padding(end = 8.dp)
-                                    )
-                                    InputItem(
-                                        textFieldValue = TextFieldValue(
-                                            emi.emiDetails.emi,
-                                            selection = TextRange(emi.emiDetails.emi.length)
-                                        ),
-                                        onTextChanged = {
-                                            emiField = it
-
-                                            emiCalculatorViewModel.processIntent(
-                                                EmiIntents.UserUpdates(emiField.text)
-                                            )
-                                        },
-                                        label = stringResource(id = com.allutils.feature_emi.R.string.label_EMI),
-                                        keyboardType = KeyboardType.Number,
-                                        modifier = Modifier
-                                            .weight(1f)
-                                            .padding(start = 8.dp)
-                                    )
-                                }
-                            }
-
-                            item {
-                                Button(
-                                    onClick = {
-                                        emiCalculatorViewModel.processIntent(
-                                            EmiIntents.CalculateEMIDetails(
-                                                EmiDetailsInput(
-                                                    principal = principleField.text.toDoubleOrNull(),
-                                                    interest = interestField.text.toDoubleOrNull(),
-                                                    tenure = tenureField.text.toDoubleOrNull(),
-                                                    emi = emiField.text.toDoubleOrNull()
-                                                )
-                                            )
-                                        )
-                                    },
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(vertical = 8.dp)
-                                ) {
-                                    Text(
-                                        text = stringResource(id = com.allutils.feature_emi.R.string.button_calculate),
-                                        modifier = Modifier.padding(horizontal = 30.dp, vertical = 8.dp)
-                                    )
-                                }
-                            }
-                        }
-                    }
-
-                    EmiViewState.EmiDetailsInitialContent -> {
+                    is EmiViewState.EmiDetailsInitialContent -> {
                         LazyColumn(
                             modifier = Modifier
                                 .padding(16.dp)
@@ -305,6 +188,7 @@ internal fun EMICalculatorHome(emiCalculatorViewModel: EMICalculatorViewModel) {
                                     textFieldValue = principleField,
                                     label = stringResource(id = com.allutils.feature_emi.R.string.label_principle),
                                     keyboardType = KeyboardType.Number,
+                                    visualTransformation = currencyVisualTransformation,
                                     onTextChanged = { principleField = it },
                                     modifier = Modifier
                                         .fillMaxWidth()
@@ -343,6 +227,7 @@ internal fun EMICalculatorHome(emiCalculatorViewModel: EMICalculatorViewModel) {
                                     InputItem(
                                         textFieldValue = emiField,
                                         label = stringResource(id = com.allutils.feature_emi.R.string.label_EMI),
+                                        visualTransformation = currencyVisualTransformation,
                                         keyboardType = KeyboardType.Number,
                                         onTextChanged = { emiField = it },
                                         modifier = Modifier
@@ -387,17 +272,20 @@ internal fun EMICalculatorHome(emiCalculatorViewModel: EMICalculatorViewModel) {
                         ) {
                             item {
                                 InputItem(
-                                    textFieldValue = TextFieldValue(
-                                        emi.emiDetails.principal,
-                                        selection = TextRange(emi.emiDetails.principal.length)
-                                    ),
-                                    onTextChanged = {
-                                        principleField = it
-
-                                        emiCalculatorViewModel.processIntent(
-                                            EmiIntents.UserUpdates(principleField.text)
+                                    textFieldValue = principleField,
+                                    onTextChanged = { newValue ->
+                                        val trimmed = newValue.text.trimStart('0').trim { it.isDigit().not() }
+                                        if (trimmed.isEmpty() || trimmed.toInt() <= MAX_VALUE) {
+                                            emiCalculatorViewModel.processIntent(
+                                                EmiIntents.UserUpdates(trimmed)
+                                            )
+                                        }
+                                        principleField = TextFieldValue(
+                                            emi.emiDetails.principal,
+                                            selection = TextRange(emi.emiDetails.principal.length)
                                         )
                                     },
+                                    visualTransformation = currencyVisualTransformation,
                                     label = stringResource(id = com.allutils.feature_emi.R.string.label_principle),
                                     keyboardType = KeyboardType.Number,
                                     modifier = Modifier
@@ -464,6 +352,133 @@ internal fun EMICalculatorHome(emiCalculatorViewModel: EMICalculatorViewModel) {
                                                 EmiIntents.UserUpdates(emiField.text)
                                             )
                                         },
+                                        label = stringResource(id = com.allutils.feature_emi.R.string.label_EMI),
+                                        visualTransformation = currencyVisualTransformation,
+                                        keyboardType = KeyboardType.Number,
+                                        modifier = Modifier
+                                            .weight(1f)
+                                            .padding(start = 8.dp)
+                                    )
+                                }
+                            }
+
+                            item {
+                                Button(
+                                    onClick = {
+                                        emiCalculatorViewModel.processIntent(
+                                            EmiIntents.CalculateEMIDetails(
+                                                EmiDetailsInput(
+                                                    principal = principleField.text.toDoubleOrNull(),
+                                                    interest = interestField.text.toDoubleOrNull(),
+                                                    tenure = tenureField.text.toDoubleOrNull(),
+                                                    emi = emiField.text.toDoubleOrNull()
+                                                )
+                                            )
+                                        )
+                                    },
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(vertical = 8.dp)
+                                ) {
+                                    Text(
+                                        text = stringResource(id = com.allutils.feature_emi.R.string.button_calculate),
+                                        modifier = Modifier.padding(horizontal = 30.dp, vertical = 8.dp)
+                                    )
+                                }
+                            }
+                        }
+                    }
+
+                    is EmiViewState.EmiDetailsContent -> {
+
+                        LazyColumn(
+                            modifier = Modifier
+                                .padding(16.dp)
+                                .fillMaxWidth()
+                        ) {
+                            item {
+                                InputItem(
+                                    textFieldValue = principleField,
+                                    onTextChanged = { newValue ->
+                                        val trimmed = newValue.text.trimStart('0').trim { it.isDigit().not() }
+                                        if (trimmed.isEmpty() || trimmed.toInt() <= MAX_VALUE) {
+                                            emiCalculatorViewModel.processIntent(
+                                                EmiIntents.UserUpdates(trimmed)
+                                            )
+                                        }
+                                        principleField = TextFieldValue(
+                                            emi.emiDetails.principal,
+                                            selection = TextRange(emi.emiDetails.principal.length)
+                                        )
+                                    },
+                                    label = stringResource(id = com.allutils.feature_emi.R.string.label_principle),
+                                    keyboardType = KeyboardType.Number,
+                                    visualTransformation = currencyVisualTransformation,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(vertical = 4.dp)
+                                )
+                            }
+
+                            item {
+                                InputItem(
+                                    textFieldValue = TextFieldValue(
+                                        emi.emiDetails.interest,
+                                        selection = TextRange(emi.emiDetails.interest.length)
+                                    ),
+                                    onTextChanged = {
+                                        interestField = it
+
+                                        emiCalculatorViewModel.processIntent(
+                                            EmiIntents.UserUpdates(interestField.text)
+                                        )
+                                    },
+                                    label = stringResource(id = com.allutils.feature_emi.R.string.label_interest),
+                                    keyboardType = KeyboardType.Number,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(vertical = 4.dp)
+                                )
+                            }
+
+                            item {
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(vertical = 4.dp),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    InputItem(
+                                        textFieldValue = TextFieldValue(
+                                            emi.emiDetails.tenure,
+                                            selection = TextRange(emi.emiDetails.tenure.length)
+                                        ),
+                                        onTextChanged = {
+                                            tenureField = it
+
+                                            emiCalculatorViewModel.processIntent(
+                                                EmiIntents.UserUpdates(tenureField.text)
+                                            )
+                                        },
+                                        label = stringResource(id = com.allutils.feature_emi.R.string.label_tenure),
+                                        keyboardType = KeyboardType.Number,
+                                        modifier = Modifier
+                                            .weight(1f)
+                                            .padding(end = 8.dp)
+                                    )
+                                    InputItem(
+                                        textFieldValue = TextFieldValue(
+                                            emi.emiDetails.emi,
+                                            selection = TextRange(emi.emiDetails.emi.length)
+                                        ),
+                                        onTextChanged = {
+                                            emiField = it
+
+                                            emiCalculatorViewModel.processIntent(
+                                                EmiIntents.UserUpdates(emiField.text)
+                                            )
+                                        },
+                                        visualTransformation = currencyVisualTransformation,
                                         label = stringResource(id = com.allutils.feature_emi.R.string.label_EMI),
                                         keyboardType = KeyboardType.Number,
                                         modifier = Modifier

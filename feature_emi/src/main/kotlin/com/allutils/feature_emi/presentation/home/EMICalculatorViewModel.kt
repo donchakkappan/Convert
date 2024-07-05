@@ -12,7 +12,16 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 internal class EMICalculatorViewModel(private val getEmiDetails: GetEmiDetails) :
-    BaseViewModel<EmiViewState, EmiResults>(EmiViewState.EmiDetailsInitialContent) {
+    BaseViewModel<EmiViewState, EmiResults>(
+        EmiViewState.EmiDetailsInitialContent(
+            EmiDetailsOutput(
+                principal = "",
+                interest = "",
+                tenure = "",
+                emi = ""
+            )
+        )
+    ) {
 
     private var job: Job? = null
 
@@ -21,11 +30,17 @@ internal class EMICalculatorViewModel(private val getEmiDetails: GetEmiDetails) 
             is EmiIntents.CalculateEMIDetails -> getEMIDetails(intent.emiDetailsInput)
 
             EmiIntents.LoadInitialValues -> {
-                sendAction(EmiResults.EmiDetailsInitialContentSuccess)
+                sendAction(EmiResults.EmiDetailsInitialContentSuccess(getUserUpdates()))
             }
 
             is EmiIntents.UserUpdates -> {
-                sendAction(EmiResults.UserUpdateSuccess(getUserUpdates(intent.principle)))
+                val emiInput = getUserUpdates(
+                    principle = intent.principle,
+                    interest = intent.interest,
+                    tenure = intent.tenure,
+                    emi = intent.emi
+                )
+                sendAction(EmiResults.UserUpdateSuccess(emiInput))
             }
         }
     }

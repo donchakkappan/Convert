@@ -4,7 +4,8 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.ContentAlpha
 import androidx.compose.material.LocalContentAlpha
 import androidx.compose.material.OutlinedTextField
-import androidx.compose.material3.*
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
@@ -26,7 +27,9 @@ fun InputItem(
 ) {
     OutlinedTextField(
         value = textFieldValue,
-        onValueChange = { onTextChanged(it) },
+        onValueChange = {
+            onTextChanged(it)
+        },
         keyboardOptions = KeyboardOptions(
             keyboardType = keyboardType,
             imeAction = ImeAction.Next
