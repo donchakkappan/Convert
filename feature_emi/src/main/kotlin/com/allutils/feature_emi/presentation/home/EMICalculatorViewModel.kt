@@ -50,12 +50,38 @@ internal class EMICalculatorViewModel(private val getEmiDetails: GetEmiDetails) 
         interest: String? = null,
         tenure: String? = null,
         emi: String? = null
-    ) = EmiDetailsOutput(
-        principal = principle ?: "",
-        interest = interest ?: "",
-        tenure = tenure ?: "",
-        emi = emi ?: ""
-    )
+    ): EmiDetailsOutput {
+        uiStateFlow.value.let { state ->
+            when (state) {
+                is EmiViewState.EmiDetailsInitialContent -> {
+                    return EmiDetailsOutput(
+                        principal = principle ?: state.emiDetails.principal,
+                        interest = interest ?: state.emiDetails.interest,
+                        tenure = tenure ?: state.emiDetails.tenure,
+                        emi = emi ?: state.emiDetails.emi
+                    )
+                }
+
+                is EmiViewState.UserUpdateContent -> {
+                    return EmiDetailsOutput(
+                        principal = principle ?: state.emiDetails.principal,
+                        interest = interest ?: state.emiDetails.interest,
+                        tenure = tenure ?: state.emiDetails.tenure,
+                        emi = emi ?: state.emiDetails.emi
+                    )
+                }
+
+                is EmiViewState.EmiDetailsContent -> {
+                    return EmiDetailsOutput(
+                        principal = principle ?: state.emiDetails.principal,
+                        interest = interest ?: state.emiDetails.interest,
+                        tenure = tenure ?: state.emiDetails.tenure,
+                        emi = emi ?: state.emiDetails.emi
+                    )
+                }
+            }
+        }
+    }
 
     private fun getEMIDetails(emiDetailsInput: EmiDetailsInput) {
         if (job != null) {
