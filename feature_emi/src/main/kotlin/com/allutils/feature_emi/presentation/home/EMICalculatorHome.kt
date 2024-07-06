@@ -18,7 +18,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -166,17 +165,10 @@ internal fun EMICalculatorHome(emiCalculatorViewModel: EMICalculatorViewModel) {
 
             val uiState: EmiViewState by emiCalculatorViewModel.uiStateFlow.collectAsStateWithLifecycle()
 
-            var principleField by remember { mutableStateOf(TextFieldValue()) }
-            var interestField by remember { mutableStateOf(TextFieldValue()) }
-            var tenureField by remember { mutableStateOf(TextFieldValue()) }
-            var emiField by remember { mutableStateOf(TextFieldValue()) }
-
             val currencyVisualTransformation = rememberCurrencyVisualTransformation(currency = "INR")
-            val MAX_VALUE = 10000
 
             uiState.let { emi ->
                 when (emi) {
-
                     is EmiViewState.EmiDetailsInitialContent -> {
                         LazyColumn(
                             modifier = Modifier
@@ -185,11 +177,26 @@ internal fun EMICalculatorHome(emiCalculatorViewModel: EMICalculatorViewModel) {
                         ) {
                             item {
                                 InputItem(
-                                    textFieldValue = principleField,
+                                    textFieldValue = TextFieldValue(
+                                        emi.emiDetails.principal,
+                                        selection = TextRange(emi.emiDetails.principal.length)
+                                    ),
                                     label = stringResource(id = com.allutils.feature_emi.R.string.label_principle),
                                     keyboardType = KeyboardType.Number,
+                                    onTextChanged = { newValue ->
+                                        val trimmed = newValue.text.trimStart('0').trim { it.isDigit().not() }
+                                        if (trimmed.isNotEmpty()) {
+                                            emiCalculatorViewModel.processIntent(
+                                                EmiIntents.UserUpdates(
+                                                    principle = trimmed,
+                                                    interest = emi.emiDetails.interest,
+                                                    tenure = emi.emiDetails.tenure,
+                                                    emi = emi.emiDetails.emi
+                                                )
+                                            )
+                                        }
+                                    },
                                     visualTransformation = currencyVisualTransformation,
-                                    onTextChanged = { principleField = it },
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .padding(vertical = 4.dp)
@@ -198,10 +205,25 @@ internal fun EMICalculatorHome(emiCalculatorViewModel: EMICalculatorViewModel) {
 
                             item {
                                 InputItem(
-                                    textFieldValue = interestField,
+                                    textFieldValue = TextFieldValue(
+                                        emi.emiDetails.interest,
+                                        selection = TextRange(emi.emiDetails.interest.length)
+                                    ),
+                                    onTextChanged = { newValue ->
+                                        val trimmed = newValue.text.trimStart('0').trim { it.isDigit().not() }
+                                        if (trimmed.isNotEmpty()) {
+                                            emiCalculatorViewModel.processIntent(
+                                                EmiIntents.UserUpdates(
+                                                    interest = trimmed,
+                                                    principle = emi.emiDetails.principal,
+                                                    tenure = emi.emiDetails.tenure,
+                                                    emi = emi.emiDetails.emi
+                                                )
+                                            )
+                                        }
+                                    },
                                     label = stringResource(id = com.allutils.feature_emi.R.string.label_interest),
                                     keyboardType = KeyboardType.Number,
-                                    onTextChanged = { interestField = it },
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .padding(vertical = 4.dp)
@@ -216,20 +238,51 @@ internal fun EMICalculatorHome(emiCalculatorViewModel: EMICalculatorViewModel) {
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     InputItem(
-                                        textFieldValue = tenureField,
+                                        textFieldValue = TextFieldValue(
+                                            emi.emiDetails.tenure,
+                                            selection = TextRange(emi.emiDetails.tenure.length)
+                                        ),
+                                        onTextChanged = { newValue ->
+                                            val trimmed = newValue.text.trimStart('0').trim { it.isDigit().not() }
+                                            if (trimmed.isNotEmpty()) {
+                                                emiCalculatorViewModel.processIntent(
+                                                    EmiIntents.UserUpdates(
+                                                        tenure = trimmed,
+                                                        principle = emi.emiDetails.principal,
+                                                        emi = emi.emiDetails.emi,
+                                                        interest = emi.emiDetails.interest
+                                                    )
+                                                )
+                                            }
+
+                                        },
                                         label = stringResource(id = com.allutils.feature_emi.R.string.label_tenure),
                                         keyboardType = KeyboardType.Number,
-                                        onTextChanged = { tenureField = it },
                                         modifier = Modifier
                                             .weight(1f)
                                             .padding(end = 8.dp)
                                     )
                                     InputItem(
-                                        textFieldValue = emiField,
-                                        label = stringResource(id = com.allutils.feature_emi.R.string.label_EMI),
+                                        textFieldValue = TextFieldValue(
+                                            emi.emiDetails.emi,
+                                            selection = TextRange(emi.emiDetails.emi.length)
+                                        ),
+                                        onTextChanged = { newValue ->
+                                            val trimmed = newValue.text.trimStart('0').trim { it.isDigit().not() }
+                                            if (trimmed.isNotEmpty()) {
+                                                emiCalculatorViewModel.processIntent(
+                                                    EmiIntents.UserUpdates(
+                                                        emi = trimmed,
+                                                        principle = emi.emiDetails.principal,
+                                                        tenure = emi.emiDetails.tenure,
+                                                        interest = emi.emiDetails.interest
+                                                    )
+                                                )
+                                            }
+                                        },
                                         visualTransformation = currencyVisualTransformation,
+                                        label = stringResource(id = com.allutils.feature_emi.R.string.label_EMI),
                                         keyboardType = KeyboardType.Number,
-                                        onTextChanged = { emiField = it },
                                         modifier = Modifier
                                             .weight(1f)
                                             .padding(start = 8.dp)
@@ -243,10 +296,10 @@ internal fun EMICalculatorHome(emiCalculatorViewModel: EMICalculatorViewModel) {
                                         emiCalculatorViewModel.processIntent(
                                             EmiIntents.CalculateEMIDetails(
                                                 EmiDetailsInput(
-                                                    principal = principleField.text.toDoubleOrNull(),
-                                                    interest = interestField.text.toDoubleOrNull(),
-                                                    tenure = tenureField.text.toDoubleOrNull(),
-                                                    emi = emiField.text.toDoubleOrNull()
+                                                    principal = emi.emiDetails.principal.toDoubleOrNull(),
+                                                    interest = emi.emiDetails.interest.toDoubleOrNull(),
+                                                    tenure = emi.emiDetails.tenure.toDoubleOrNull(),
+                                                    emi = emi.emiDetails.emi.toDoubleOrNull()
                                                 )
                                             )
                                         )
@@ -272,18 +325,22 @@ internal fun EMICalculatorHome(emiCalculatorViewModel: EMICalculatorViewModel) {
                         ) {
                             item {
                                 InputItem(
-                                    textFieldValue = principleField,
+                                    textFieldValue = TextFieldValue(
+                                        emi.emiDetails.principal,
+                                        selection = TextRange(emi.emiDetails.principal.length)
+                                    ),
                                     onTextChanged = { newValue ->
                                         val trimmed = newValue.text.trimStart('0').trim { it.isDigit().not() }
-                                        if (trimmed.isEmpty() || trimmed.toInt() <= MAX_VALUE) {
+                                        if (trimmed.isNotEmpty()) {
                                             emiCalculatorViewModel.processIntent(
-                                                EmiIntents.UserUpdates(trimmed)
+                                                EmiIntents.UserUpdates(
+                                                    principle = trimmed,
+                                                    interest = emi.emiDetails.interest,
+                                                    tenure = emi.emiDetails.tenure,
+                                                    emi = emi.emiDetails.emi
+                                                )
                                             )
                                         }
-                                        principleField = TextFieldValue(
-                                            emi.emiDetails.principal,
-                                            selection = TextRange(emi.emiDetails.principal.length)
-                                        )
                                     },
                                     visualTransformation = currencyVisualTransformation,
                                     label = stringResource(id = com.allutils.feature_emi.R.string.label_principle),
@@ -300,12 +357,18 @@ internal fun EMICalculatorHome(emiCalculatorViewModel: EMICalculatorViewModel) {
                                         emi.emiDetails.interest,
                                         selection = TextRange(emi.emiDetails.interest.length)
                                     ),
-                                    onTextChanged = {
-                                        interestField = it
-
-                                        emiCalculatorViewModel.processIntent(
-                                            EmiIntents.UserUpdates(interestField.text)
-                                        )
+                                    onTextChanged = { newValue ->
+                                        val trimmed = newValue.text.trimStart('0').trim { it.isDigit().not() }
+                                        if (trimmed.isNotEmpty()) {
+                                            emiCalculatorViewModel.processIntent(
+                                                EmiIntents.UserUpdates(
+                                                    interest = trimmed,
+                                                    principle = emi.emiDetails.principal,
+                                                    tenure = emi.emiDetails.tenure,
+                                                    emi = emi.emiDetails.emi
+                                                )
+                                            )
+                                        }
                                     },
                                     label = stringResource(id = com.allutils.feature_emi.R.string.label_interest),
                                     keyboardType = KeyboardType.Number,
@@ -327,12 +390,18 @@ internal fun EMICalculatorHome(emiCalculatorViewModel: EMICalculatorViewModel) {
                                             emi.emiDetails.tenure,
                                             selection = TextRange(emi.emiDetails.tenure.length)
                                         ),
-                                        onTextChanged = {
-                                            tenureField = it
-
-                                            emiCalculatorViewModel.processIntent(
-                                                EmiIntents.UserUpdates(tenureField.text)
-                                            )
+                                        onTextChanged = { newValue ->
+                                            val trimmed = newValue.text.trimStart('0').trim { it.isDigit().not() }
+                                            if (trimmed.isNotEmpty()) {
+                                                emiCalculatorViewModel.processIntent(
+                                                    EmiIntents.UserUpdates(
+                                                        tenure = trimmed,
+                                                        principle = emi.emiDetails.principal,
+                                                        emi = emi.emiDetails.emi,
+                                                        interest = emi.emiDetails.interest
+                                                    )
+                                                )
+                                            }
                                         },
                                         label = stringResource(id = com.allutils.feature_emi.R.string.label_tenure),
                                         keyboardType = KeyboardType.Number,
@@ -345,12 +414,18 @@ internal fun EMICalculatorHome(emiCalculatorViewModel: EMICalculatorViewModel) {
                                             emi.emiDetails.emi,
                                             selection = TextRange(emi.emiDetails.emi.length)
                                         ),
-                                        onTextChanged = {
-                                            emiField = it
-
-                                            emiCalculatorViewModel.processIntent(
-                                                EmiIntents.UserUpdates(emiField.text)
-                                            )
+                                        onTextChanged = { newValue ->
+                                            val trimmed = newValue.text.trimStart('0').trim { it.isDigit().not() }
+                                            if (trimmed.isNotEmpty()) {
+                                                emiCalculatorViewModel.processIntent(
+                                                    EmiIntents.UserUpdates(
+                                                        emi = trimmed,
+                                                        principle = emi.emiDetails.principal,
+                                                        tenure = emi.emiDetails.tenure,
+                                                        interest = emi.emiDetails.interest
+                                                    )
+                                                )
+                                            }
                                         },
                                         label = stringResource(id = com.allutils.feature_emi.R.string.label_EMI),
                                         visualTransformation = currencyVisualTransformation,
@@ -368,10 +443,10 @@ internal fun EMICalculatorHome(emiCalculatorViewModel: EMICalculatorViewModel) {
                                         emiCalculatorViewModel.processIntent(
                                             EmiIntents.CalculateEMIDetails(
                                                 EmiDetailsInput(
-                                                    principal = principleField.text.toDoubleOrNull(),
-                                                    interest = interestField.text.toDoubleOrNull(),
-                                                    tenure = tenureField.text.toDoubleOrNull(),
-                                                    emi = emiField.text.toDoubleOrNull()
+                                                    principal = emi.emiDetails.principal.toDoubleOrNull(),
+                                                    interest = emi.emiDetails.interest.toDoubleOrNull(),
+                                                    tenure = emi.emiDetails.tenure.toDoubleOrNull(),
+                                                    emi = emi.emiDetails.emi.toDoubleOrNull()
                                                 )
                                             )
                                         )
@@ -398,18 +473,22 @@ internal fun EMICalculatorHome(emiCalculatorViewModel: EMICalculatorViewModel) {
                         ) {
                             item {
                                 InputItem(
-                                    textFieldValue = principleField,
+                                    textFieldValue = TextFieldValue(
+                                        emi.emiDetails.principal,
+                                        selection = TextRange(emi.emiDetails.principal.length)
+                                    ),
                                     onTextChanged = { newValue ->
                                         val trimmed = newValue.text.trimStart('0').trim { it.isDigit().not() }
-                                        if (trimmed.isEmpty() || trimmed.toInt() <= MAX_VALUE) {
+                                        if (trimmed.isNotEmpty()) {
                                             emiCalculatorViewModel.processIntent(
-                                                EmiIntents.UserUpdates(trimmed)
+                                                EmiIntents.UserUpdates(
+                                                    principle = trimmed,
+                                                    interest = emi.emiDetails.interest,
+                                                    tenure = emi.emiDetails.tenure,
+                                                    emi = emi.emiDetails.emi
+                                                )
                                             )
                                         }
-                                        principleField = TextFieldValue(
-                                            emi.emiDetails.principal,
-                                            selection = TextRange(emi.emiDetails.principal.length)
-                                        )
                                     },
                                     label = stringResource(id = com.allutils.feature_emi.R.string.label_principle),
                                     keyboardType = KeyboardType.Number,
@@ -426,12 +505,18 @@ internal fun EMICalculatorHome(emiCalculatorViewModel: EMICalculatorViewModel) {
                                         emi.emiDetails.interest,
                                         selection = TextRange(emi.emiDetails.interest.length)
                                     ),
-                                    onTextChanged = {
-                                        interestField = it
-
-                                        emiCalculatorViewModel.processIntent(
-                                            EmiIntents.UserUpdates(interestField.text)
-                                        )
+                                    onTextChanged = { newValue ->
+                                        val trimmed = newValue.text.trimStart('0').trim { it.isDigit().not() }
+                                        if (trimmed.isNotEmpty()) {
+                                            emiCalculatorViewModel.processIntent(
+                                                EmiIntents.UserUpdates(
+                                                    interest = trimmed,
+                                                    principle = emi.emiDetails.principal,
+                                                    tenure = emi.emiDetails.tenure,
+                                                    emi = emi.emiDetails.emi
+                                                )
+                                            )
+                                        }
                                     },
                                     label = stringResource(id = com.allutils.feature_emi.R.string.label_interest),
                                     keyboardType = KeyboardType.Number,
@@ -453,12 +538,18 @@ internal fun EMICalculatorHome(emiCalculatorViewModel: EMICalculatorViewModel) {
                                             emi.emiDetails.tenure,
                                             selection = TextRange(emi.emiDetails.tenure.length)
                                         ),
-                                        onTextChanged = {
-                                            tenureField = it
-
-                                            emiCalculatorViewModel.processIntent(
-                                                EmiIntents.UserUpdates(tenureField.text)
-                                            )
+                                        onTextChanged = { newValue ->
+                                            val trimmed = newValue.text.trimStart('0').trim { it.isDigit().not() }
+                                            if (trimmed.isNotEmpty()) {
+                                                emiCalculatorViewModel.processIntent(
+                                                    EmiIntents.UserUpdates(
+                                                        tenure = trimmed,
+                                                        principle = emi.emiDetails.principal,
+                                                        emi = emi.emiDetails.emi,
+                                                        interest = emi.emiDetails.interest
+                                                    )
+                                                )
+                                            }
                                         },
                                         label = stringResource(id = com.allutils.feature_emi.R.string.label_tenure),
                                         keyboardType = KeyboardType.Number,
@@ -471,12 +562,18 @@ internal fun EMICalculatorHome(emiCalculatorViewModel: EMICalculatorViewModel) {
                                             emi.emiDetails.emi,
                                             selection = TextRange(emi.emiDetails.emi.length)
                                         ),
-                                        onTextChanged = {
-                                            emiField = it
-
-                                            emiCalculatorViewModel.processIntent(
-                                                EmiIntents.UserUpdates(emiField.text)
-                                            )
+                                        onTextChanged = { newValue ->
+                                            val trimmed = newValue.text.trimStart('0').trim { it.isDigit().not() }
+                                            if (trimmed.isNotEmpty()) {
+                                                emiCalculatorViewModel.processIntent(
+                                                    EmiIntents.UserUpdates(
+                                                        emi = trimmed,
+                                                        principle = emi.emiDetails.principal,
+                                                        tenure = emi.emiDetails.tenure,
+                                                        interest = emi.emiDetails.interest
+                                                    )
+                                                )
+                                            }
                                         },
                                         visualTransformation = currencyVisualTransformation,
                                         label = stringResource(id = com.allutils.feature_emi.R.string.label_EMI),
@@ -494,10 +591,10 @@ internal fun EMICalculatorHome(emiCalculatorViewModel: EMICalculatorViewModel) {
                                         emiCalculatorViewModel.processIntent(
                                             EmiIntents.CalculateEMIDetails(
                                                 EmiDetailsInput(
-                                                    principal = principleField.text.toDoubleOrNull(),
-                                                    interest = interestField.text.toDoubleOrNull(),
-                                                    tenure = tenureField.text.toDoubleOrNull(),
-                                                    emi = emiField.text.toDoubleOrNull()
+                                                    principal = emi.emiDetails.principal.toDoubleOrNull(),
+                                                    interest = emi.emiDetails.interest.toDoubleOrNull(),
+                                                    tenure = emi.emiDetails.tenure.toDoubleOrNull(),
+                                                    emi = emi.emiDetails.emi.toDoubleOrNull()
                                                 )
                                             )
                                         )

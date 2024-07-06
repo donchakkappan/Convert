@@ -13,14 +13,16 @@ fun calculateEMI(principal: Double, rate: Double, tenure: Int): Double {
     val monthlyRate = rate / (12 * 100) // Convert annual rate to monthly and percentage to decimal
     val numerator = principal * monthlyRate * (1 + monthlyRate).pow(tenure)
     val denominator = (1 + monthlyRate).pow(tenure) - 1
-    return numerator / denominator
+    val emi = numerator / denominator
+    return String.format("%.2f", emi).toDouble()
 }
 
 fun calculatePrincipal(emi: Double, rate: Double, tenure: Double): Double {
     val monthlyRate = rate / (12 * 100) // Convert annual rate to monthly and percentage to decimal
     val numerator = emi * ((1 + monthlyRate).pow(tenure) - 1)
     val denominator = monthlyRate * (1 + monthlyRate).pow(tenure)
-    return numerator / denominator
+    val principle = numerator / denominator
+    return String.format("%.2f", principle).toDouble()
 }
 
 fun calculateTenure(principal: Double, emi: Double, rate: Double): Int {
