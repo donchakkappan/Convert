@@ -12,7 +12,7 @@ import androidx.core.text.isDigitsOnly
 import java.text.NumberFormat
 import java.util.Currency
 
-private class CurrencyVisualTransformation(
+class CurrencyVisualTransformation(
     currencyCode: String
 ) : VisualTransformation {
 

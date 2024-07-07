@@ -23,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.buildAnnotatedString
@@ -510,7 +511,7 @@ internal fun CalculationsUI(
         item {
             InputItem(
                 textFieldValue = TextFieldValue(
-                    emi.emiDetails.principal,
+                    currencyVisualTransformation.filter(AnnotatedString(emi.emiDetails.principal)).text,
                     selection = TextRange(emi.emiDetails.principal.length)
                 ),
                 onTextChanged = { newValue ->
