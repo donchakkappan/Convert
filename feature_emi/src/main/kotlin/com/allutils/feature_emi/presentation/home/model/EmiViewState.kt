@@ -5,8 +5,6 @@ import com.allutils.feature_emi.domain.models.EmiDetailsOutput
 
 internal sealed interface EmiViewState : BaseState {
 
-    data class EmiDetailsInitialContent(val emiDetails: EmiDetailsOutput) : EmiViewState
-
     data class EmiDetailsContent(val emiDetails: EmiDetailsOutput) : EmiViewState
 
     data class UserUpdateContent(val emiDetails: EmiDetailsOutput) : EmiViewState

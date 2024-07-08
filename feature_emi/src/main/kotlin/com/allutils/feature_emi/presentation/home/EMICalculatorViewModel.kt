@@ -13,7 +13,7 @@ import kotlinx.coroutines.launch
 
 internal class EMICalculatorViewModel(private val getEmiDetails: GetEmiDetails) :
     BaseViewModel<EmiViewState, EmiResults>(
-        EmiViewState.EmiDetailsInitialContent(
+        EmiViewState.UserUpdateContent(
             EmiDetailsOutput(
                 principal = "",
                 interest = "",
@@ -28,10 +28,6 @@ internal class EMICalculatorViewModel(private val getEmiDetails: GetEmiDetails) 
     fun processIntent(intent: EmiIntents) {
         when (intent) {
             is EmiIntents.CalculateEMIDetails -> getEMIDetails(intent.emiDetailsInput)
-
-            EmiIntents.LoadInitialValues -> {
-                sendAction(EmiResults.EmiDetailsInitialContentSuccess(getUserUpdates()))
-            }
 
             is EmiIntents.UserUpdates -> {
                 val emiInput = getUserUpdates(
@@ -53,14 +49,6 @@ internal class EMICalculatorViewModel(private val getEmiDetails: GetEmiDetails) 
     ): EmiDetailsOutput {
         uiStateFlow.value.let { state ->
             when (state) {
-                is EmiViewState.EmiDetailsInitialContent -> {
-                    return EmiDetailsOutput(
-                        principal = principle ?: state.emiDetails.principal,
-                        interest = interest ?: state.emiDetails.interest,
-                        tenure = tenure ?: state.emiDetails.tenure,
-                        emi = emi ?: state.emiDetails.emi
-                    )
-                }
 
                 is EmiViewState.UserUpdateContent -> {
                     return EmiDetailsOutput(

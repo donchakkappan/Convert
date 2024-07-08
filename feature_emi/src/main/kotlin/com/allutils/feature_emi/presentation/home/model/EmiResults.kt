@@ -13,8 +13,4 @@ internal sealed interface EmiResults : BaseAction<EmiViewState> {
         override fun reduce(state: EmiViewState) = EmiViewState.UserUpdateContent(emiDetails)
     }
 
-    class EmiDetailsInitialContentSuccess(private val emiDetails: EmiDetailsOutput) : EmiResults {
-        override fun reduce(state: EmiViewState) = EmiViewState.EmiDetailsInitialContent(emiDetails)
-    }
-
 }
