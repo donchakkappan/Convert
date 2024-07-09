@@ -4,14 +4,22 @@ import androidx.lifecycle.viewModelScope
 import com.allutils.base.presentation.viewmodel.BaseViewModel
 import com.allutils.feature_emi.domain.models.EmiDetailsInput
 import com.allutils.feature_emi.domain.models.EmiDetailsOutput
-import com.allutils.feature_emi.domain.usecase.GetEmiDetails
+import com.allutils.feature_emi.domain.usecase.CalculateEmi
+import com.allutils.feature_emi.domain.usecase.CalculateInterest
+import com.allutils.feature_emi.domain.usecase.CalculatePrinciple
+import com.allutils.feature_emi.domain.usecase.CalculateTenure
 import com.allutils.feature_emi.presentation.home.model.EmiIntents
 import com.allutils.feature_emi.presentation.home.model.EmiResults
 import com.allutils.feature_emi.presentation.home.model.EmiViewState
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
-internal class EMICalculatorViewModel(private val getEmiDetails: GetEmiDetails) :
+internal class EMICalculatorViewModel(
+    private val calculateEmi: CalculateEmi,
+    private val calculateTenure: CalculateTenure,
+    private val calculateInterest: CalculateInterest,
+    private val calculatePrinciple: CalculatePrinciple
+) :
     BaseViewModel<EmiViewState, EmiResults>(
         EmiViewState.UserUpdateContent(
             EmiDetailsOutput(
@@ -78,7 +86,7 @@ internal class EMICalculatorViewModel(private val getEmiDetails: GetEmiDetails) 
         }
 
         job = viewModelScope.launch {
-            val emiDetails = getEmiDetails.invoke(emiDetailsInput)
+            val emiDetails = calculateEmi.invoke(emiDetailsInput)
             sendAction(EmiResults.EmiDetailsSuccess(emiDetails))
         }
     }

@@ -236,7 +236,7 @@ internal fun UserUpdateUI(
                     selection = TextRange(emi.emiDetails.interest.length)
                 ),
                 onTextChanged = { newValue ->
-                    val trimmed = newValue.text.trimStart('0').trim { it.isDigit().not() }
+                    val trimmed = newValue.text.trimStart('0').trim { it.isDigit().not() && it != '.' }
                     if (trimmed.isNotEmpty()) {
                         emiCalculatorViewModel.processIntent(
                             EmiIntents.UserUpdates(
@@ -360,7 +360,8 @@ internal fun CalculationsUI(
     ) {
         item {
             InputItem(
-                textFieldValue = TextFieldValue(numberFormatter.format(emi.emiDetails.principal.toDouble()),
+                textFieldValue = TextFieldValue(
+                    numberFormatter.format(emi.emiDetails.principal.toDouble()),
                     selection = TextRange(emi.emiDetails.principal.length)
                 ),
                 onTextChanged = { newValue ->
@@ -392,7 +393,7 @@ internal fun CalculationsUI(
                     selection = TextRange(emi.emiDetails.interest.length)
                 ),
                 onTextChanged = { newValue ->
-                    val trimmed = newValue.text.trimStart('0').trim { it.isDigit().not() }
+                    val trimmed = newValue.text.trimStart('0').trim { it.isDigit().not() && it != '.' }
                     if (trimmed.isNotEmpty()) {
                         emiCalculatorViewModel.processIntent(
                             EmiIntents.UserUpdates(

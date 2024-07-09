@@ -7,7 +7,7 @@ import com.allutils.feature_emi.domain.calculateTenure
 import com.allutils.feature_emi.domain.models.EmiDetailsInput
 import com.allutils.feature_emi.domain.models.EmiDetailsOutput
 
-internal class GetEmiDetails() {
+internal class CalculatePrinciple() {
     suspend operator fun invoke(emiDetailsInput: EmiDetailsInput): EmiDetailsOutput {
         if (emiDetailsInput.principal == null) { //find Principle
             return EmiDetailsOutput(
