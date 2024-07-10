@@ -23,6 +23,7 @@ internal class EMICalculatorViewModel(
     BaseViewModel<EmiViewState, EmiResults>(
         EmiViewState.UserUpdateContent(
             EmiDetailsOutput(
+                selected = "E",
                 principal = "",
                 interest = "",
                 tenure = "",
@@ -35,10 +36,29 @@ internal class EMICalculatorViewModel(
 
     fun processIntent(intent: EmiIntents) {
         when (intent) {
-            is EmiIntents.CalculateEMIDetails -> getEMIDetails(intent.emiDetailsInput)
+            is EmiIntents.CalculateEMIDetails -> {
+                when (intent.emiDetailsInput.selected) {
+                    "P" -> {
+                        getPrincipleDetails(intent.emiDetailsInput)
+                    }
+
+                    "I" -> {
+                        getInterestDetails(intent.emiDetailsInput)
+                    }
+
+                    "T" -> {
+                        getTenureDetails(intent.emiDetailsInput)
+                    }
+
+                    else -> {
+                        getEMIDetails(intent.emiDetailsInput)
+                    }
+                }
+            }
 
             is EmiIntents.UserUpdates -> {
                 val emiInput = getUserUpdates(
+                    selected = intent.selected,
                     principle = intent.principle,
                     interest = intent.interest,
                     tenure = intent.tenure,
@@ -50,6 +70,7 @@ internal class EMICalculatorViewModel(
     }
 
     private fun getUserUpdates(
+        selected: String,
         principle: String? = null,
         interest: String? = null,
         tenure: String? = null,
@@ -60,6 +81,7 @@ internal class EMICalculatorViewModel(
 
                 is EmiViewState.UserUpdateContent -> {
                     return EmiDetailsOutput(
+                        selected = selected,
                         principal = principle ?: state.emiDetails.principal,
                         interest = interest ?: state.emiDetails.interest,
                         tenure = tenure ?: state.emiDetails.tenure,
@@ -69,6 +91,7 @@ internal class EMICalculatorViewModel(
 
                 is EmiViewState.EmiDetailsContent -> {
                     return EmiDetailsOutput(
+                        selected = selected,
                         principal = principle ?: state.emiDetails.principal,
                         interest = interest ?: state.emiDetails.interest,
                         tenure = tenure ?: state.emiDetails.tenure,
@@ -87,6 +110,42 @@ internal class EMICalculatorViewModel(
 
         job = viewModelScope.launch {
             val emiDetails = calculateEmi.invoke(emiDetailsInput)
+            sendAction(EmiResults.EmiDetailsSuccess(emiDetails))
+        }
+    }
+
+    private fun getTenureDetails(emiDetailsInput: EmiDetailsInput) {
+        if (job != null) {
+            job?.cancel()
+            job = null
+        }
+
+        job = viewModelScope.launch {
+            val emiDetails = calculateTenure.invoke(emiDetailsInput)
+            sendAction(EmiResults.EmiDetailsSuccess(emiDetails))
+        }
+    }
+
+    private fun getPrincipleDetails(emiDetailsInput: EmiDetailsInput) {
+        if (job != null) {
+            job?.cancel()
+            job = null
+        }
+
+        job = viewModelScope.launch {
+            val emiDetails = calculatePrinciple.invoke(emiDetailsInput)
+            sendAction(EmiResults.EmiDetailsSuccess(emiDetails))
+        }
+    }
+
+    private fun getInterestDetails(emiDetailsInput: EmiDetailsInput) {
+        if (job != null) {
+            job?.cancel()
+            job = null
+        }
+
+        job = viewModelScope.launch {
+            val emiDetails = calculateInterest.invoke(emiDetailsInput)
             sendAction(EmiResults.EmiDetailsSuccess(emiDetails))
         }
     }

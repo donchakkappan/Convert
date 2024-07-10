@@ -7,9 +7,11 @@ sealed class EmiIntents {
     data class CalculateEMIDetails(val emiDetailsInput: EmiDetailsInput) : EmiIntents()
 
     data class UserUpdates(
+        val selected: String = "E",
         val principle: String? = null,
         val interest: String? = null,
         val tenure: String? = null,
         val emi: String? = null
     ) : EmiIntents()
+
 }
