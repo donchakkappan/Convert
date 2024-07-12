@@ -14,4 +14,6 @@ sealed class EmiIntents {
         val emi: String? = null
     ) : EmiIntents()
 
+    data object Reset : EmiIntents()
+
 }

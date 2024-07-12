@@ -66,6 +66,17 @@ internal class EMICalculatorViewModel(
                 )
                 sendAction(EmiResults.UserUpdateSuccess(emiInput))
             }
+
+            EmiIntents.Reset -> {
+                val emiOutput = EmiDetailsOutput(
+                    selected = "E",
+                    principal = "",
+                    interest = "",
+                    tenure = "",
+                    emi = ""
+                )
+                sendAction(EmiResults.UserUpdateSuccess(emiOutput))
+            }
         }
     }
 

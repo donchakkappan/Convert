@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -13,6 +14,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.RadioButton
+import androidx.compose.material.RadioButtonDefaults
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -42,7 +44,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.allutils.app_style_guide.R
-import com.allutils.app_style_guide.styles.darkestBlue
+import com.allutils.app_style_guide.styles.lightBlue
 import com.allutils.app_style_guide.styles.lightestGrey
 import com.allutils.app_style_guide.styles.mediumBlue
 import com.allutils.feature_emi.domain.models.EmiDetailsInput
@@ -59,8 +61,8 @@ internal fun EMICalculatorHome(emiCalculatorViewModel: EMICalculatorViewModel) {
         modifier = Modifier
             .fillMaxSize()
     ) {
-        val guideline1 = createGuidelineFromTop(0.50f)
-        val guideline2 = createGuidelineFromTop(0.55f)
+        val guideline1 = createGuidelineFromTop(0.6f)
+        val guideline2 = createGuidelineFromTop(0.7f)
         val (image, loginForm) = createRefs()
 
         Box(
@@ -74,10 +76,10 @@ internal fun EMICalculatorHome(emiCalculatorViewModel: EMICalculatorViewModel) {
                 }
                 .background(
                     brush = Brush.verticalGradient(
-                        colors = listOf(darkestBlue, mediumBlue)
+                        colors = listOf(mediumBlue, lightBlue)
                     )
                 )
-                .padding(16.dp)
+                .padding(6.dp)
         ) {
             val uiState: EmiViewState by emiCalculatorViewModel.uiStateFlow.collectAsStateWithLifecycle()
 
@@ -199,11 +201,14 @@ internal fun UserUpdateUI(
     currencyVisualTransformation: VisualTransformation,
     emiCalculatorViewModel: EMICalculatorViewModel
 ) {
-    var errorMessage by remember { mutableStateOf("") }
+    var principleErrorMessage by remember { mutableStateOf("") }
+    var tenureErrorMessage by remember { mutableStateOf("") }
+    var interestErrorMessage by remember { mutableStateOf("") }
+    var emiErrorMessage by remember { mutableStateOf("") }
 
     LazyColumn(
         modifier = Modifier
-            .padding(16.dp)
+            .padding(6.dp)
             .fillMaxWidth()
     ) {
         item {
@@ -212,22 +217,32 @@ internal fun UserUpdateUI(
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                RadioButton(selected = emi.emiDetails.selected == "P", onClick = {
-                    emiCalculatorViewModel.processIntent(
-                        EmiIntents.UserUpdates(
-                            selected = "P"
+                RadioButton(
+                    colors = RadioButtonDefaults.colors(
+                        selectedColor = MaterialTheme.colorScheme.primary,
+                        unselectedColor = MaterialTheme.colorScheme.onSurface,
+                        disabledColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
+                    ),
+                    selected = emi.emiDetails.selected == "P",
+                    onClick = {
+                        emiCalculatorViewModel.processIntent(
+                            EmiIntents.UserUpdates(
+                                selected = "P"
+                            )
                         )
-                    )
-                })
+                    })
 
                 Column {
                     InputItem(
+                        enabled = emi.emiDetails.selected != "P",
                         textFieldValue = TextFieldValue(
                             emi.emiDetails.principal,
                             selection = TextRange(emi.emiDetails.principal.length)
                         ),
                         onTextChanged = { newValue ->
                             val trimmed = newValue.text.trimStart('0').trim { it.isDigit().not() }
+                            if (trimmed.isNotEmpty())
+                                principleErrorMessage = ""
                             emiCalculatorViewModel.processIntent(
                                 EmiIntents.UserUpdates(
                                     selected = emi.emiDetails.selected,
@@ -246,14 +261,12 @@ internal fun UserUpdateUI(
                             .padding(vertical = 4.dp)
                     )
 
-                    if (errorMessage.isNotEmpty()) {
-                        Text(
-                            text = errorMessage,
-                            color = Color.Black,
-                            style = MaterialTheme.typography.bodySmall,
-                            modifier = Modifier.padding(top = 4.dp)
-                        )
-                    }
+                    Text(
+                        text = principleErrorMessage,
+                        color = Color.Red,
+                        style = MaterialTheme.typography.bodySmall,
+                        modifier = Modifier.padding(top = 4.dp)
+                    )
                 }
             }
         }
@@ -264,36 +277,54 @@ internal fun UserUpdateUI(
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                RadioButton(selected = emi.emiDetails.selected == "I", onClick = {
-                    emiCalculatorViewModel.processIntent(
-                        EmiIntents.UserUpdates(
-                            selected = "I"
-                        )
-                    )
-                })
-                InputItem(
-                    textFieldValue = TextFieldValue(
-                        emi.emiDetails.interest,
-                        selection = TextRange(emi.emiDetails.interest.length)
+                RadioButton(
+                    colors = RadioButtonDefaults.colors(
+                        selectedColor = MaterialTheme.colorScheme.primary,
+                        unselectedColor = MaterialTheme.colorScheme.onSurface,
+                        disabledColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
                     ),
-                    onTextChanged = { newValue ->
-                        val trimmed = newValue.text.trimStart('0').trim { it.isDigit().not() && it != '.' }
+                    selected = emi.emiDetails.selected == "I",
+                    onClick = {
                         emiCalculatorViewModel.processIntent(
                             EmiIntents.UserUpdates(
-                                selected = emi.emiDetails.selected,
-                                interest = trimmed,
-                                principle = emi.emiDetails.principal,
-                                tenure = emi.emiDetails.tenure,
-                                emi = emi.emiDetails.emi
+                                selected = "I"
                             )
                         )
-                    },
-                    label = stringResource(id = com.allutils.feature_emi.R.string.label_interest),
-                    keyboardType = KeyboardType.Number,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 4.dp)
-                )
+                    })
+                Column {
+                    InputItem(
+                        enabled = emi.emiDetails.selected != "I",
+                        textFieldValue = TextFieldValue(
+                            emi.emiDetails.interest,
+                            selection = TextRange(emi.emiDetails.interest.length)
+                        ),
+                        onTextChanged = { newValue ->
+                            val trimmed = newValue.text.trimStart('0').trim { it.isDigit().not() && it != '.' }
+                            if (trimmed.isNotEmpty())
+                                interestErrorMessage = ""
+                            emiCalculatorViewModel.processIntent(
+                                EmiIntents.UserUpdates(
+                                    selected = emi.emiDetails.selected,
+                                    interest = trimmed,
+                                    principle = emi.emiDetails.principal,
+                                    tenure = emi.emiDetails.tenure,
+                                    emi = emi.emiDetails.emi
+                                )
+                            )
+                        },
+                        label = stringResource(id = com.allutils.feature_emi.R.string.label_interest),
+                        keyboardType = KeyboardType.Number,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 4.dp)
+                    )
+                    Text(
+                        text = interestErrorMessage,
+                        color = Color.Red,
+                        style = MaterialTheme.typography.bodySmall,
+                        modifier = Modifier.padding(top = 4.dp)
+                    )
+                }
             }
         }
 
@@ -304,100 +335,174 @@ internal fun UserUpdateUI(
                     .padding(vertical = 4.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                RadioButton(selected = emi.emiDetails.selected == "T", onClick = {
-                    emiCalculatorViewModel.processIntent(
-                        EmiIntents.UserUpdates(
-                            selected = "T"
-                        )
-                    )
-                })
-
-                InputItem(
-                    textFieldValue = TextFieldValue(
-                        emi.emiDetails.tenure,
-                        selection = TextRange(emi.emiDetails.tenure.length)
+                RadioButton(
+                    colors = RadioButtonDefaults.colors(
+                        selectedColor = MaterialTheme.colorScheme.primary,
+                        unselectedColor = MaterialTheme.colorScheme.onSurface,
+                        disabledColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
                     ),
-                    onTextChanged = { newValue ->
-                        val trimmed = newValue.text.trimStart('0').trim { it.isDigit().not() }
+                    selected = emi.emiDetails.selected == "T",
+                    onClick = {
                         emiCalculatorViewModel.processIntent(
                             EmiIntents.UserUpdates(
-                                selected = emi.emiDetails.selected,
-                                tenure = trimmed,
-                                principle = emi.emiDetails.principal,
-                                emi = emi.emiDetails.emi,
-                                interest = emi.emiDetails.interest
+                                selected = "T"
                             )
                         )
-                    },
-                    label = stringResource(id = com.allutils.feature_emi.R.string.label_tenure),
-                    keyboardType = KeyboardType.Number,
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(end = 8.dp)
-                )
+                    })
 
-                RadioButton(selected = emi.emiDetails.selected == "E", onClick = {
-                    emiCalculatorViewModel.processIntent(
-                        EmiIntents.UserUpdates(
-                            selected = "E"
-                        )
+                Column(modifier = Modifier.weight(1f)) {
+                    InputItem(
+                        enabled = emi.emiDetails.selected != "T",
+                        textFieldValue = TextFieldValue(
+                            emi.emiDetails.tenure,
+                            selection = TextRange(emi.emiDetails.tenure.length)
+                        ),
+                        onTextChanged = { newValue ->
+                            val trimmed = newValue.text.trimStart('0').trim { !it.isDigit() }
+                            if (trimmed.isNotEmpty())
+                                tenureErrorMessage = ""
+                            emiCalculatorViewModel.processIntent(
+                                EmiIntents.UserUpdates(
+                                    selected = emi.emiDetails.selected,
+                                    tenure = trimmed,
+                                    principle = emi.emiDetails.principal,
+                                    emi = emi.emiDetails.emi,
+                                    interest = emi.emiDetails.interest
+                                )
+                            )
+                        },
+                        label = stringResource(id = com.allutils.feature_emi.R.string.label_tenure),
+                        keyboardType = KeyboardType.Number,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(end = 8.dp)
                     )
-                })
+                    Text(
+                        text = tenureErrorMessage,
+                        color = Color.Red,
+                        style = MaterialTheme.typography.bodySmall,
+                        modifier = Modifier.padding(top = 4.dp)
+                    )
+                }
 
-                InputItem(
-                    textFieldValue = TextFieldValue(
-                        emi.emiDetails.emi,
-                        selection = TextRange(emi.emiDetails.emi.length)
+                RadioButton(
+                    colors = RadioButtonDefaults.colors(
+                        selectedColor = MaterialTheme.colorScheme.primary,
+                        unselectedColor = MaterialTheme.colorScheme.onSurface,
+                        disabledColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
                     ),
-                    onTextChanged = { newValue ->
-                        val trimmed = newValue.text.trimStart('0').trim { it.isDigit().not() }
+                    selected = emi.emiDetails.selected == "E",
+                    onClick = {
                         emiCalculatorViewModel.processIntent(
                             EmiIntents.UserUpdates(
-                                selected = emi.emiDetails.selected,
-                                emi = trimmed,
-                                principle = emi.emiDetails.principal,
-                                tenure = emi.emiDetails.tenure,
-                                interest = emi.emiDetails.interest
+                                selected = "E"
                             )
                         )
-                    },
-                    label = stringResource(id = com.allutils.feature_emi.R.string.label_EMI),
-                    visualTransformation = currencyVisualTransformation,
-                    keyboardType = KeyboardType.Number,
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(start = 8.dp)
-                )
+                    })
+
+                Column(modifier = Modifier.weight(1f)) {
+                    InputItem(
+                        enabled = emi.emiDetails.selected != "E",
+                        textFieldValue = TextFieldValue(
+                            emi.emiDetails.emi,
+                            selection = TextRange(emi.emiDetails.emi.length)
+                        ),
+                        onTextChanged = { newValue ->
+                            val trimmed = newValue.text.trimStart('0').trim { it.isDigit().not() }
+                            if (trimmed.isNotEmpty())
+                                emiErrorMessage = ""
+                            emiCalculatorViewModel.processIntent(
+                                EmiIntents.UserUpdates(
+                                    selected = emi.emiDetails.selected,
+                                    emi = trimmed,
+                                    principle = emi.emiDetails.principal,
+                                    tenure = emi.emiDetails.tenure,
+                                    interest = emi.emiDetails.interest
+                                )
+                            )
+                        },
+                        label = stringResource(id = com.allutils.feature_emi.R.string.label_EMI),
+                        visualTransformation = currencyVisualTransformation,
+                        keyboardType = KeyboardType.Number,
+                        modifier = Modifier
+                            .fillMaxHeight()
+                            .padding(start = 8.dp)
+                    )
+                    Text(
+                        text = emiErrorMessage,
+                        color = Color.Red,
+                        style = MaterialTheme.typography.bodySmall,
+                        modifier = Modifier.padding(top = 4.dp)
+                    )
+                }
             }
         }
 
         item {
-            Button(
-                onClick = {
-                    if (emi.emiDetails.principal.isEmpty()) {
-                        errorMessage = "Field cannot be empty"
-                    } else {
-                        emiCalculatorViewModel.processIntent(
-                            EmiIntents.CalculateEMIDetails(
-                                EmiDetailsInput(
-                                    selected = emi.emiDetails.selected,
-                                    principal = emi.emiDetails.principal.toIntOrNull(),
-                                    interest = emi.emiDetails.interest.toDoubleOrNull(),
-                                    tenure = emi.emiDetails.tenure.toIntOrNull(),
-                                    emi = emi.emiDetails.emi.toIntOrNull()
-                                )
-                            )
-                        )
-                    }
-                },
+            Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 8.dp)
+                    .padding(vertical = 4.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(
-                    text = stringResource(id = com.allutils.feature_emi.R.string.button_calculate),
-                    modifier = Modifier.padding(horizontal = 30.dp, vertical = 8.dp)
-                )
+                Button(
+                    onClick = {
+                        if (emi.emiDetails.selected !== "P" && emi.emiDetails.principal.isEmpty()) {
+                            principleErrorMessage = "Enter Amount"
+                            interestErrorMessage = ""
+                            tenureErrorMessage = ""
+                            emiErrorMessage = ""
+                        } else if (emi.emiDetails.selected !== "I" && emi.emiDetails.interest.isEmpty()) {
+                            interestErrorMessage = "Enter Interest Rate"
+                            principleErrorMessage = ""
+                            tenureErrorMessage = ""
+                            emiErrorMessage = ""
+                        } else if (emi.emiDetails.selected !== "T" && emi.emiDetails.tenure.isEmpty()) {
+                            tenureErrorMessage = "Enter Tenure"
+                            principleErrorMessage = ""
+                            interestErrorMessage = ""
+                            emiErrorMessage = ""
+                        } else if (emi.emiDetails.selected !== "E" && emi.emiDetails.emi.isEmpty()) {
+                            emiErrorMessage = "Enter EMI"
+                            principleErrorMessage = ""
+                            tenureErrorMessage = ""
+                            interestErrorMessage = ""
+                        } else {
+                            emiCalculatorViewModel.processIntent(
+                                EmiIntents.CalculateEMIDetails(
+                                    EmiDetailsInput(
+                                        selected = emi.emiDetails.selected,
+                                        principal = emi.emiDetails.principal.toIntOrNull(),
+                                        interest = emi.emiDetails.interest.toDoubleOrNull(),
+                                        tenure = emi.emiDetails.tenure.toIntOrNull(),
+                                        emi = emi.emiDetails.emi.toIntOrNull()
+                                    )
+                                )
+                            )
+                        }
+                    },
+                    modifier = Modifier
+                        .weight(.5f)
+                        .padding(8.dp)
+                ) {
+                    Text(
+                        text = stringResource(id = com.allutils.feature_emi.R.string.button_calculate),
+                        modifier = Modifier.padding(horizontal = 30.dp, vertical = 8.dp)
+                    )
+                }
+                Button(
+                    onClick = {
+                        emiCalculatorViewModel.processIntent(EmiIntents.Reset)
+                    },
+                    modifier = Modifier
+                        .weight(.5f)
+                        .padding(8.dp)
+                ) {
+                    Text(
+                        text = stringResource(id = com.allutils.feature_emi.R.string.button_reset),
+                        modifier = Modifier.padding(horizontal = 30.dp, vertical = 8.dp)
+                    )
+                }
             }
         }
     }
@@ -413,10 +518,14 @@ internal fun CalculationsUI(
         currency = Currency.getInstance("INR")
         maximumFractionDigits = 0
     }
+    var principleErrorMessage by remember { mutableStateOf("") }
+    var tenureErrorMessage by remember { mutableStateOf("") }
+    var interestErrorMessage by remember { mutableStateOf("") }
+    var emiErrorMessage by remember { mutableStateOf("") }
 
     LazyColumn(
         modifier = Modifier
-            .padding(16.dp)
+            .padding(6.dp)
             .fillMaxWidth()
     ) {
         item {
@@ -425,37 +534,55 @@ internal fun CalculationsUI(
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                RadioButton(selected = emi.emiDetails.selected == "P", onClick = {
-                    emiCalculatorViewModel.processIntent(
-                        EmiIntents.UserUpdates(
-                            selected = "P"
-                        )
-                    )
-                })
-                InputItem(
-                    textFieldValue = TextFieldValue(
-                        numberFormatter.format(emi.emiDetails.principal.toDouble()),
-                        selection = TextRange(emi.emiDetails.principal.length)
+                RadioButton(
+                    colors = RadioButtonDefaults.colors(
+                        selectedColor = MaterialTheme.colorScheme.primary,
+                        unselectedColor = MaterialTheme.colorScheme.onSurface,
+                        disabledColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
                     ),
-                    onTextChanged = { newValue ->
-                        val trimmed = newValue.text.trimStart('0').trim { it.isDigit().not() }
+                    selected = emi.emiDetails.selected == "P",
+                    onClick = {
                         emiCalculatorViewModel.processIntent(
                             EmiIntents.UserUpdates(
-                                selected = emi.emiDetails.selected,
-                                principle = trimmed,
-                                interest = emi.emiDetails.interest,
-                                tenure = emi.emiDetails.tenure,
-                                emi = emi.emiDetails.emi
+                                selected = "P"
                             )
                         )
-                    },
-                    label = stringResource(id = com.allutils.feature_emi.R.string.label_principle),
-                    keyboardType = KeyboardType.Number,
-                    visualTransformation = currencyVisualTransformation,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 4.dp)
-                )
+                    })
+                Column {
+                    InputItem(
+                        enabled = emi.emiDetails.selected != "P",
+                        textFieldValue = TextFieldValue(
+                            numberFormatter.format(emi.emiDetails.principal.toDouble()),
+                            selection = TextRange(emi.emiDetails.principal.length)
+                        ),
+                        onTextChanged = { newValue ->
+                            val trimmed = newValue.text.trimStart('0').trim { it.isDigit().not() }
+                            if (trimmed.isNotEmpty())
+                                principleErrorMessage = ""
+                            emiCalculatorViewModel.processIntent(
+                                EmiIntents.UserUpdates(
+                                    selected = emi.emiDetails.selected,
+                                    principle = trimmed,
+                                    interest = emi.emiDetails.interest,
+                                    tenure = emi.emiDetails.tenure,
+                                    emi = emi.emiDetails.emi
+                                )
+                            )
+                        },
+                        label = stringResource(id = com.allutils.feature_emi.R.string.label_principle),
+                        keyboardType = KeyboardType.Number,
+                        visualTransformation = currencyVisualTransformation,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 4.dp)
+                    )
+                    Text(
+                        text = principleErrorMessage,
+                        color = Color.Red,
+                        style = MaterialTheme.typography.bodySmall,
+                        modifier = Modifier.padding(top = 4.dp)
+                    )
+                }
             }
         }
 
@@ -465,36 +592,54 @@ internal fun CalculationsUI(
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                RadioButton(selected = emi.emiDetails.selected == "I", onClick = {
-                    emiCalculatorViewModel.processIntent(
-                        EmiIntents.UserUpdates(
-                            selected = "I"
-                        )
-                    )
-                })
-                InputItem(
-                    textFieldValue = TextFieldValue(
-                        emi.emiDetails.interest,
-                        selection = TextRange(emi.emiDetails.interest.length)
+                RadioButton(
+                    colors = RadioButtonDefaults.colors(
+                        selectedColor = MaterialTheme.colorScheme.primary,
+                        unselectedColor = MaterialTheme.colorScheme.onSurface,
+                        disabledColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
                     ),
-                    onTextChanged = { newValue ->
-                        val trimmed = newValue.text.trimStart('0').trim { it.isDigit().not() && it != '.' }
+                    selected = emi.emiDetails.selected == "I",
+                    onClick = {
                         emiCalculatorViewModel.processIntent(
                             EmiIntents.UserUpdates(
-                                selected = emi.emiDetails.selected,
-                                interest = trimmed,
-                                principle = emi.emiDetails.principal,
-                                tenure = emi.emiDetails.tenure,
-                                emi = emi.emiDetails.emi
+                                selected = "I"
                             )
                         )
-                    },
-                    label = stringResource(id = com.allutils.feature_emi.R.string.label_interest),
-                    keyboardType = KeyboardType.Number,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 4.dp)
-                )
+                    })
+                Column {
+                    InputItem(
+                        enabled = emi.emiDetails.selected != "I",
+                        textFieldValue = TextFieldValue(
+                            emi.emiDetails.interest,
+                            selection = TextRange(emi.emiDetails.interest.length)
+                        ),
+                        onTextChanged = { newValue ->
+                            val trimmed = newValue.text.trimStart('0').trim { it.isDigit().not() && it != '.' }
+                            if (trimmed.isNotEmpty())
+                                interestErrorMessage = ""
+                            emiCalculatorViewModel.processIntent(
+                                EmiIntents.UserUpdates(
+                                    selected = emi.emiDetails.selected,
+                                    interest = trimmed,
+                                    principle = emi.emiDetails.principal,
+                                    tenure = emi.emiDetails.tenure,
+                                    emi = emi.emiDetails.emi
+                                )
+                            )
+                        },
+                        label = stringResource(id = com.allutils.feature_emi.R.string.label_interest),
+                        keyboardType = KeyboardType.Number,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 4.dp)
+                    )
+                    Text(
+                        text = interestErrorMessage,
+                        color = Color.Red,
+                        style = MaterialTheme.typography.bodySmall,
+                        modifier = Modifier.padding(top = 4.dp)
+                    )
+                }
             }
         }
 
@@ -505,95 +650,177 @@ internal fun CalculationsUI(
                     .padding(vertical = 4.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                RadioButton(selected = emi.emiDetails.selected == "T", onClick = {
-                    emiCalculatorViewModel.processIntent(
-                        EmiIntents.UserUpdates(
-                            selected = "T"
-                        )
-                    )
-                })
-                InputItem(
-                    textFieldValue = TextFieldValue(
-                        emi.emiDetails.tenure,
-                        selection = TextRange(emi.emiDetails.tenure.length)
+                RadioButton(
+                    colors = RadioButtonDefaults.colors(
+                        selectedColor = MaterialTheme.colorScheme.primary,
+                        unselectedColor = MaterialTheme.colorScheme.onSurface,
+                        disabledColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
                     ),
-                    onTextChanged = { newValue ->
-                        val trimmed = newValue.text.trimStart('0').trim { it.isDigit().not() }
+                    selected = emi.emiDetails.selected == "T",
+                    onClick = {
                         emiCalculatorViewModel.processIntent(
                             EmiIntents.UserUpdates(
-                                selected = emi.emiDetails.selected,
-                                tenure = trimmed,
-                                principle = emi.emiDetails.principal,
-                                emi = emi.emiDetails.emi,
-                                interest = emi.emiDetails.interest
+                                selected = "T"
                             )
                         )
-                    },
-                    label = stringResource(id = com.allutils.feature_emi.R.string.label_tenure),
-                    keyboardType = KeyboardType.Number,
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(end = 8.dp)
-                )
-                RadioButton(selected = emi.emiDetails.selected == "E", onClick = {
-                    emiCalculatorViewModel.processIntent(
-                        EmiIntents.UserUpdates(
-                            selected = "E"
-                        )
-                    )
-                })
+                    })
 
-                InputItem(
-                    textFieldValue = TextFieldValue(
-                        emi.emiDetails.emi,
-                        selection = TextRange(emi.emiDetails.emi.length)
+                Column(modifier = Modifier.weight(1f)) {
+                    InputItem(
+                        enabled = emi.emiDetails.selected != "T",
+                        textFieldValue = TextFieldValue(
+                            emi.emiDetails.tenure,
+                            selection = TextRange(emi.emiDetails.tenure.length)
+                        ),
+                        onTextChanged = { newValue ->
+                            val trimmed = newValue.text.trimStart('0').trim { it.isDigit().not() }
+                            if (trimmed.isNotEmpty())
+                                tenureErrorMessage = ""
+                            emiCalculatorViewModel.processIntent(
+                                EmiIntents.UserUpdates(
+                                    selected = emi.emiDetails.selected,
+                                    tenure = trimmed,
+                                    principle = emi.emiDetails.principal,
+                                    emi = emi.emiDetails.emi,
+                                    interest = emi.emiDetails.interest
+                                )
+                            )
+                        },
+                        label = stringResource(id = com.allutils.feature_emi.R.string.label_tenure),
+                        keyboardType = KeyboardType.Number,
+                        modifier = Modifier
+                            .fillMaxHeight()
+                            .padding(end = 8.dp)
+                    )
+                    Text(
+                        text = tenureErrorMessage,
+                        color = Color.Red,
+                        style = MaterialTheme.typography.bodySmall,
+                        modifier = Modifier.padding(top = 4.dp)
+                    )
+                }
+
+                RadioButton(
+                    colors = RadioButtonDefaults.colors(
+                        selectedColor = MaterialTheme.colorScheme.primary,
+                        unselectedColor = MaterialTheme.colorScheme.onSurface,
+                        disabledColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
                     ),
-                    onTextChanged = { newValue ->
-                        val trimmed = newValue.text.trimStart('0').trim { it.isDigit().not() }
+                    selected = emi.emiDetails.selected == "E",
+                    onClick = {
                         emiCalculatorViewModel.processIntent(
                             EmiIntents.UserUpdates(
-                                selected = emi.emiDetails.selected,
-                                emi = trimmed,
-                                principle = emi.emiDetails.principal,
-                                tenure = emi.emiDetails.tenure,
-                                interest = emi.emiDetails.interest
+                                selected = "E"
                             )
                         )
-                    },
-                    visualTransformation = currencyVisualTransformation,
-                    label = stringResource(id = com.allutils.feature_emi.R.string.label_EMI),
-                    keyboardType = KeyboardType.Number,
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(start = 8.dp)
-                )
+                    })
+
+                Column(modifier = Modifier.weight(1f)) {
+                    InputItem(
+                        enabled = emi.emiDetails.selected != "E",
+                        textFieldValue = TextFieldValue(
+                            emi.emiDetails.emi,
+                            selection = TextRange(emi.emiDetails.emi.length)
+                        ),
+                        onTextChanged = { newValue ->
+                            val trimmed = newValue.text.trimStart('0').trim { it.isDigit().not() }
+                            if (trimmed.isNotEmpty())
+                                emiErrorMessage = ""
+                            emiCalculatorViewModel.processIntent(
+                                EmiIntents.UserUpdates(
+                                    selected = emi.emiDetails.selected,
+                                    emi = trimmed,
+                                    principle = emi.emiDetails.principal,
+                                    tenure = emi.emiDetails.tenure,
+                                    interest = emi.emiDetails.interest
+                                )
+                            )
+                        },
+                        visualTransformation = currencyVisualTransformation,
+                        label = stringResource(id = com.allutils.feature_emi.R.string.label_EMI),
+                        keyboardType = KeyboardType.Number,
+                        modifier = Modifier
+                            .fillMaxHeight()
+                            .padding(start = 8.dp)
+                    )
+                    Text(
+                        text = emiErrorMessage,
+                        color = Color.Red,
+                        style = MaterialTheme.typography.bodySmall,
+                        modifier = Modifier.padding(top = 4.dp)
+                    )
+                }
             }
         }
 
         item {
-            Button(
-                onClick = {
-                    emiCalculatorViewModel.processIntent(
-                        EmiIntents.CalculateEMIDetails(
-                            EmiDetailsInput(
-                                selected = emi.emiDetails.selected,
-                                principal = emi.emiDetails.principal.toIntOrNull(),
-                                interest = emi.emiDetails.interest.toDoubleOrNull(),
-                                tenure = emi.emiDetails.tenure.toIntOrNull(),
-                                emi = emi.emiDetails.emi.toIntOrNull()
-                            )
-                        )
-                    )
-                },
+            Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 8.dp)
+                    .padding(vertical = 4.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(
-                    text = stringResource(id = com.allutils.feature_emi.R.string.button_calculate),
-                    modifier = Modifier.padding(horizontal = 30.dp, vertical = 8.dp)
-                )
+                Button(
+                    onClick = {
+                        if (emi.emiDetails.selected !== "P" && emi.emiDetails.principal.isEmpty()) {
+                            principleErrorMessage = "Enter Amount"
+                            interestErrorMessage = ""
+                            tenureErrorMessage = ""
+                            emiErrorMessage = ""
+                        } else if (emi.emiDetails.selected !== "I" && emi.emiDetails.interest.isEmpty()) {
+                            interestErrorMessage = "Enter Interest Rate"
+                            principleErrorMessage = ""
+                            tenureErrorMessage = ""
+                            emiErrorMessage = ""
+                        } else if (emi.emiDetails.selected !== "T" && emi.emiDetails.tenure.isEmpty()) {
+                            tenureErrorMessage = "Enter Tenure"
+                            principleErrorMessage = ""
+                            interestErrorMessage = ""
+                            emiErrorMessage = ""
+                        } else if (emi.emiDetails.selected !== "E" && emi.emiDetails.emi.isEmpty()) {
+                            emiErrorMessage = "Enter EMI"
+                            principleErrorMessage = ""
+                            tenureErrorMessage = ""
+                            interestErrorMessage = ""
+                        } else {
+                            emiCalculatorViewModel.processIntent(
+                                EmiIntents.CalculateEMIDetails(
+                                    EmiDetailsInput(
+                                        selected = emi.emiDetails.selected,
+                                        principal = emi.emiDetails.principal.toIntOrNull(),
+                                        interest = emi.emiDetails.interest.toDoubleOrNull(),
+                                        tenure = emi.emiDetails.tenure.toIntOrNull(),
+                                        emi = emi.emiDetails.emi.toIntOrNull()
+                                    )
+                                )
+                            )
+                        }
+                    },
+                    modifier = Modifier
+                        .weight(.5f)
+                        .padding(8.dp)
+                ) {
+                    Text(
+                        text = stringResource(id = com.allutils.feature_emi.R.string.button_calculate),
+                        modifier = Modifier.padding(horizontal = 30.dp, vertical = 8.dp)
+                    )
+                }
+
+                Button(
+                    onClick = {
+                        emiCalculatorViewModel.processIntent(EmiIntents.Reset)
+                    },
+                    modifier = Modifier
+                        .weight(.5f)
+                        .padding(8.dp)
+                ) {
+                    Text(
+                        text = stringResource(id = com.allutils.feature_emi.R.string.button_reset),
+                        modifier = Modifier.padding(horizontal = 30.dp, vertical = 8.dp)
+                    )
+                }
             }
         }
     }
 }
+
