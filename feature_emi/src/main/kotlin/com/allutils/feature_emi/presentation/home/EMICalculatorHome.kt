@@ -206,6 +206,8 @@ internal fun UserUpdateUI(
     var interestErrorMessage by remember { mutableStateOf("") }
     var emiErrorMessage by remember { mutableStateOf("") }
 
+    var principleInWords by remember { mutableStateOf("") }
+
     LazyColumn(
         modifier = Modifier
             .padding(6.dp)
@@ -261,12 +263,21 @@ internal fun UserUpdateUI(
                             .padding(vertical = 4.dp)
                     )
 
-                    Text(
-                        text = principleErrorMessage,
-                        color = Color.Red,
-                        style = MaterialTheme.typography.bodySmall,
-                        modifier = Modifier.padding(top = 4.dp)
-                    )
+                    Box {
+                        Text(
+                            text = principleErrorMessage,
+                            color = Color.Red,
+                            style = MaterialTheme.typography.bodySmall,
+                            modifier = Modifier.padding(top = 4.dp)
+                        )
+
+                        Text(
+                            text = principleInWords,
+                            color = Color.Black,
+                            style = MaterialTheme.typography.bodySmall,
+                            modifier = Modifier.padding(top = 4.dp)
+                        )
+                    }
                 }
             }
         }
@@ -300,8 +311,13 @@ internal fun UserUpdateUI(
                         ),
                         onTextChanged = { newValue ->
                             val trimmed = newValue.text.trimStart('0').trim { it.isDigit().not() && it != '.' }
-                            if (trimmed.isNotEmpty())
+                            if (trimmed.isNotEmpty()) {
                                 interestErrorMessage = ""
+
+                                if (emi.emiDetails.selected !== "P" && emi.emiDetails.principal.isNotEmpty())
+                                    principleInWords = numberToWords(emi.emiDetails.principal.toLongOrNull())
+                            }
+
                             emiCalculatorViewModel.processIntent(
                                 EmiIntents.UserUpdates(
                                     selected = emi.emiDetails.selected,
@@ -361,6 +377,10 @@ internal fun UserUpdateUI(
                             val trimmed = newValue.text.trimStart('0').trim { !it.isDigit() }
                             if (trimmed.isNotEmpty())
                                 tenureErrorMessage = ""
+
+                            if (emi.emiDetails.selected !== "P" && emi.emiDetails.principal.isNotEmpty())
+                                principleInWords = numberToWords(emi.emiDetails.principal.toLongOrNull())
+
                             emiCalculatorViewModel.processIntent(
                                 EmiIntents.UserUpdates(
                                     selected = emi.emiDetails.selected,
@@ -411,6 +431,10 @@ internal fun UserUpdateUI(
                             val trimmed = newValue.text.trimStart('0').trim { it.isDigit().not() }
                             if (trimmed.isNotEmpty())
                                 emiErrorMessage = ""
+
+                            if (emi.emiDetails.selected !== "P" && emi.emiDetails.principal.isNotEmpty())
+                                principleInWords = numberToWords(emi.emiDetails.principal.toLongOrNull())
+
                             emiCalculatorViewModel.processIntent(
                                 EmiIntents.UserUpdates(
                                     selected = emi.emiDetails.selected,
@@ -492,6 +516,11 @@ internal fun UserUpdateUI(
                 }
                 Button(
                     onClick = {
+                        principleErrorMessage = ""
+                        tenureErrorMessage = ""
+                        interestErrorMessage = ""
+                        emiErrorMessage = ""
+                        principleInWords = ""
                         emiCalculatorViewModel.processIntent(EmiIntents.Reset)
                     },
                     modifier = Modifier
@@ -522,6 +551,8 @@ internal fun CalculationsUI(
     var tenureErrorMessage by remember { mutableStateOf("") }
     var interestErrorMessage by remember { mutableStateOf("") }
     var emiErrorMessage by remember { mutableStateOf("") }
+
+    var principleInWords by remember { mutableStateOf("") }
 
     LazyColumn(
         modifier = Modifier
@@ -576,12 +607,21 @@ internal fun CalculationsUI(
                             .fillMaxWidth()
                             .padding(vertical = 4.dp)
                     )
-                    Text(
-                        text = principleErrorMessage,
-                        color = Color.Red,
-                        style = MaterialTheme.typography.bodySmall,
-                        modifier = Modifier.padding(top = 4.dp)
-                    )
+                    Box {
+                        Text(
+                            text = principleErrorMessage,
+                            color = Color.Red,
+                            style = MaterialTheme.typography.bodySmall,
+                            modifier = Modifier.padding(top = 4.dp)
+                        )
+
+                        Text(
+                            text = principleInWords,
+                            color = Color.Black,
+                            style = MaterialTheme.typography.bodySmall,
+                            modifier = Modifier.padding(top = 4.dp)
+                        )
+                    }
                 }
             }
         }
@@ -617,6 +657,10 @@ internal fun CalculationsUI(
                             val trimmed = newValue.text.trimStart('0').trim { it.isDigit().not() && it != '.' }
                             if (trimmed.isNotEmpty())
                                 interestErrorMessage = ""
+
+                            if (emi.emiDetails.selected !== "P" && emi.emiDetails.principal.isNotEmpty())
+                                principleInWords = numberToWords(emi.emiDetails.principal.toLongOrNull())
+
                             emiCalculatorViewModel.processIntent(
                                 EmiIntents.UserUpdates(
                                     selected = emi.emiDetails.selected,
@@ -676,6 +720,10 @@ internal fun CalculationsUI(
                             val trimmed = newValue.text.trimStart('0').trim { it.isDigit().not() }
                             if (trimmed.isNotEmpty())
                                 tenureErrorMessage = ""
+
+                            if (emi.emiDetails.selected !== "P" && emi.emiDetails.principal.isNotEmpty())
+                                principleInWords = numberToWords(emi.emiDetails.principal.toLongOrNull())
+
                             emiCalculatorViewModel.processIntent(
                                 EmiIntents.UserUpdates(
                                     selected = emi.emiDetails.selected,
@@ -726,6 +774,10 @@ internal fun CalculationsUI(
                             val trimmed = newValue.text.trimStart('0').trim { it.isDigit().not() }
                             if (trimmed.isNotEmpty())
                                 emiErrorMessage = ""
+
+                            if (emi.emiDetails.selected !== "P" && emi.emiDetails.principal.isNotEmpty())
+                                principleInWords = numberToWords(emi.emiDetails.principal.toLongOrNull())
+
                             emiCalculatorViewModel.processIntent(
                                 EmiIntents.UserUpdates(
                                     selected = emi.emiDetails.selected,
@@ -808,6 +860,11 @@ internal fun CalculationsUI(
 
                 Button(
                     onClick = {
+                        principleErrorMessage = ""
+                        tenureErrorMessage = ""
+                        interestErrorMessage = ""
+                        emiErrorMessage = ""
+                        principleInWords = ""
                         emiCalculatorViewModel.processIntent(EmiIntents.Reset)
                     },
                     modifier = Modifier
@@ -823,4 +880,68 @@ internal fun CalculationsUI(
         }
     }
 }
+
+fun numberToWords(number: Long?): String {
+    if (number == null) {
+        return ""
+    }
+
+    if (number == 0L) {
+        return "zero"
+    }
+
+    val unitsArray = arrayOf(
+        "zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine",
+        "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen"
+    )
+
+    val tensArray = arrayOf(
+        "", "", "twenty", "thirty", "forty", "fifty", "sixty", "seventy", "eighty", "ninety"
+    )
+
+    val thousandsArray = arrayOf(
+        "", "thousand", "million", "billion", "trillion", "quadrillion", "quintillion"
+    )
+
+    var num = number
+    var word = ""
+    var thousandIndex = 0
+
+    while (num > 0) {
+        val remainder = (num % 1000).toInt()
+        if (remainder != 0) {
+            val remainderInWords = convertLessThanThousand(remainder, unitsArray, tensArray)
+            word = "$remainderInWords ${thousandsArray[thousandIndex]} $word"
+        }
+        num /= 1000
+        thousandIndex++
+    }
+
+    return word.trim()
+}
+
+private fun convertLessThanThousand(number: Int, unitsArray: Array<String>, tensArray: Array<String>): String {
+    var num = number
+    var word = ""
+
+    if (num % 100 < 20) {
+        word = unitsArray[num % 100]
+        num /= 100
+    } else {
+        word = unitsArray[num % 10]
+        num /= 10
+
+        word = tensArray[num % 10] + if (word.isNotEmpty()) "-$word" else ""
+        num /= 10
+    }
+
+    if (num > 0) {
+        word = unitsArray[num] + " hundred" + if (word.isNotEmpty()) " and $word" else ""
+    }
+
+    return word
+}
+
+
+
 
