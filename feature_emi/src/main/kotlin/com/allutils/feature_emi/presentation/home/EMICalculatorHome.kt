@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -22,35 +21,31 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextRange
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.allutils.app_style_guide.R
+import com.allutils.app_style_guide.animations.LottieAssetLoader
 import com.allutils.app_style_guide.styles.lightBlue
-import com.allutils.app_style_guide.styles.lightestGrey
 import com.allutils.app_style_guide.styles.mediumBlue
+import com.allutils.feature_emi.R
 import com.allutils.feature_emi.domain.models.EmiDetailsInput
 import com.allutils.feature_emi.presentation.home.model.EmiIntents
 import com.allutils.feature_emi.presentation.home.model.EmiViewState
 import com.github.tehras.charts.piechart.PieChart
+import com.github.tehras.charts.piechart.PieChartData
 import com.github.tehras.charts.piechart.renderer.SimpleSliceDrawer
 import java.text.NumberFormat
 import java.util.Currency
@@ -111,55 +106,42 @@ internal fun EMICalculatorHome(emiCalculatorViewModel: EMICalculatorViewModel) {
                     width = Dimension.fillToConstraints
                 },
         ) {
-            HeaderUI()
+            val uiState: EmiViewState by emiCalculatorViewModel.uiStateFlow.collectAsStateWithLifecycle()
+
+            val currencyVisualTransformation = rememberCurrencyVisualTransformation(currency = "INR")
+
+            uiState.let { emi ->
+                when (emi) {
+                    is EmiViewState.UserUpdateContent -> {
+                        if (emi.emiDetails.emi.equals(""))
+                            HeaderUI_Two()
+                    }
+
+                    is EmiViewState.EmiDetailsContent -> {
+                        HeaderUI(emi, currencyVisualTransformation, emiCalculatorViewModel)
+                    }
+                }
+            }
         }
     }
 }
 
 @Composable
-internal fun HeaderUI() {
+internal fun HeaderUI(
+    data: EmiViewState.EmiDetailsContent,
+    currencyVisualTransformation: VisualTransformation,
+    emiCalculatorViewModel: EMICalculatorViewModel
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(6.dp)
     ) {
-
-        val loginText = "EMI Calculator"
-        val loginWord = "EMI"
-        val loginAnnotatedString = buildAnnotatedString {
-            append(loginText)
-            addStyle(
-                style = SpanStyle(
-                    color = Color.White,
-                    fontFamily = FontFamily(Font(R.font.roboto_bold))
-                ),
-                start = 0,
-                end = loginText.length
-            )
-            addStyle(
-                style = SpanStyle(
-                    color = Color.Black,
-                    fontFamily = FontFamily(Font(R.font.roboto_medium))
-                ),
-                start = 0,
-                end = loginWord.length
-            )
-        }
-
-        val randomPlaceHolder by rememberSaveable {
-            mutableStateOf(R.drawable.ic_image_placeholder)
-        }
-
         val pieChartDataModel = remember { PieChartDataModel() }
-
-        Text(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 10.dp, bottom = 4.dp),
-            text = loginAnnotatedString,
-            textAlign = TextAlign.Center,
-            fontSize = 22.sp,
-        )
+        val numberFormatter = NumberFormat.getCurrencyInstance().apply {
+            currency = Currency.getInstance("INR")
+            maximumFractionDigits = 0
+        }
 
         ConstraintLayout(
             modifier = Modifier
@@ -167,30 +149,189 @@ internal fun HeaderUI() {
                 .background(Color.Transparent)
                 .padding(horizontal = 4.dp, vertical = 4.dp)
         ) {
-            val (lastupdated, basecode, amount) = createRefs()
+            val (chart, interest, principle, total, emi) = createRefs()
+
+            val guideline1 = createGuidelineFromTop(0.1f)
+            val guideline2 = createGuidelineFromTop(0.9f)
+            val guideline3 = createGuidelineFromStart(0.2f)
+            val guideline4 = createGuidelineFromStart(0.7f)
+
+            Column(
+                modifier = Modifier
+                    .constrainAs(interest) {
+                        top.linkTo(guideline1)
+                        start.linkTo(guideline3)
+                        height = Dimension.fillToConstraints
+                    }
+            ) {
+                androidx.compose.material.Text(
+                    text = numberFormatter.format(data.emiDetails.interestComponent?.toDouble()),
+                    color = Color.Black,
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 14.sp
+                )
+                androidx.compose.material.Text(
+                    text = "interest",
+                    color = Color.Gray,
+                    fontSize = 12.sp
+                )
+
+            }
+            Column(
+                modifier = Modifier
+                    .constrainAs(principle) {
+                        top.linkTo(guideline1)
+                        start.linkTo(guideline4)
+                        height = Dimension.fillToConstraints
+                    }
+            ) {
+                androidx.compose.material.Text(
+                    text = numberFormatter.format(data.emiDetails.principalComponent?.toDouble()),
+                    color = Color.Black,
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 14.sp
+                )
+                androidx.compose.material.Text(
+                    text = "principle",
+                    color = Color.Gray,
+                    fontSize = 12.sp
+                )
+
+            }
+
+            Column(
+                modifier = Modifier
+                    .constrainAs(total) {
+                        top.linkTo(guideline2)
+                        start.linkTo(guideline3)
+                        height = Dimension.fillToConstraints
+                    }
+            ) {
+                androidx.compose.material.Text(
+                    text = numberFormatter.format(data.emiDetails.totalComponent?.toDouble()),
+                    color = Color.Black,
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 14.sp
+                )
+                androidx.compose.material.Text(
+                    text = "total",
+                    color = Color.Gray,
+                    fontSize = 12.sp
+                )
+
+            }
+
+            Column(
+                modifier = Modifier
+                    .constrainAs(emi) {
+                        top.linkTo(guideline2)
+                        start.linkTo(guideline4)
+                        height = Dimension.fillToConstraints
+                    }
+            ) {
+                androidx.compose.material.Text(
+                    text = numberFormatter.format(data.emiDetails.emi.toDouble()),
+                    color = Color.Black,
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 14.sp
+                )
+                androidx.compose.material.Text(
+                    text = "EMI",
+                    color = Color.Gray,
+                    fontSize = 12.sp
+                )
+
+            }
 
             Row(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .height(150.dp)
-                    .padding(vertical = 16.dp)
+                    .constrainAs(chart) {
+                        top.linkTo(guideline1)
+                        start.linkTo(interest.end)
+                        bottom.linkTo(guideline2)
+                        end.linkTo(principle.start)
+                        height = Dimension.fillToConstraints
+                    }.padding(4.dp)
             ) {
+
+                val slices = listOf(
+                    PieChartData.Slice(
+                        data.emiDetails.interestComponent?.toFloat() ?: 0f,
+                        randomColor()
+                    ),
+                    PieChartData.Slice(
+                        data.emiDetails.principalComponent?.toFloat() ?: 0f,
+                        randomColor()
+                    )
+                )
+
+                val pieChartData by remember {
+                    mutableStateOf(
+                        PieChartData(slices = slices)
+                    )
+                }
+
                 PieChart(
-                    pieChartData = pieChartDataModel.pieChartData,
+                    pieChartData = pieChartData,
                     sliceDrawer = SimpleSliceDrawer(
                         sliceThickness = pieChartDataModel.sliceThickness
                     )
                 )
             }
-            Text(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 10.dp, bottom = 4.dp, start = 6.dp),
-                text = "Enter any 3 fields to calculate the 4th one",
-                textAlign = TextAlign.Start,
-                color = lightestGrey,
-                fontSize = 9.sp,
-            )
+        }
+    }
+}
+
+private var colors = mutableListOf(
+    Color(0XFFF44336),
+    Color(0XFFE91E63),
+    Color(0XFF9C27B0),
+    Color(0XFF673AB7),
+    Color(0XFF3F51B5),
+    Color(0XFF03A9F4),
+    Color(0XFF009688),
+    Color(0XFFCDDC39),
+    Color(0XFFFFC107),
+    Color(0XFFFF5722),
+    Color(0XFF795548),
+    Color(0XFF9E9E9E),
+    Color(0XFF607D8B)
+)
+
+private fun randomColor(): Color {
+    val randomIndex = (Math.random() * colors.size).toInt()
+    val color = colors[randomIndex]
+    colors.removeAt(randomIndex)
+
+    return color
+}
+
+@Composable
+internal fun HeaderUI_Two() {
+    ConstraintLayout(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.Transparent)
+            .padding(horizontal = 4.dp, vertical = 4.dp)
+    ) {
+        val (chart) = createRefs()
+
+        val guideline1 = createGuidelineFromTop(0.2f)
+        val guideline2 = createGuidelineFromTop(0.9f)
+        val guideline3 = createGuidelineFromStart(0.2f)
+        val guideline4 = createGuidelineFromStart(0.7f)
+
+        Row(
+            modifier = Modifier
+                .constrainAs(chart) {
+                    top.linkTo(guideline1)
+                    start.linkTo(guideline3)
+                    bottom.linkTo(guideline2)
+                    end.linkTo(guideline4)
+                    height = Dimension.fillToConstraints
+                }.padding(4.dp)
+        ) {
+            LottieAssetLoader(R.raw.emi)
         }
     }
 }

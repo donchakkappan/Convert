@@ -5,5 +5,8 @@ data class EmiDetailsOutput(
     val principal: String,
     val interest: String,
     val tenure: String,
-    val emi: String
+    val emi: String,
+    val principalComponent: String? = null,
+    val interestComponent: String? = null,
+    val totalComponent: String? = null
 )

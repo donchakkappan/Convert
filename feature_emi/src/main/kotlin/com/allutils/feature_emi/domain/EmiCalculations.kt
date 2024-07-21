@@ -47,22 +47,24 @@ fun calculateInterestRate(principal: Int, emi: Int, tenure: Int): Double {
     return rate
 }
 
+// Function to calculate amortization schedule
 fun calculateAmortizationSchedule(principal: Int, rate: Double, tenure: Int): List<Pair<Double, Double>> {
     val emi = calculateEMI(principal, rate, tenure)
     val monthlyRate = rate / (12 * 100)
-    var remainingPrincipal = principal
+    var remainingPrincipal = principal.toDouble()
     val scheduleList = mutableListOf<Pair<Double, Double>>()
 
     for (month in 1..tenure) {
         val interestComponent = remainingPrincipal * monthlyRate
         val principalComponent = emi - interestComponent
-        //remainingPrincipal -= principalComponent.
-        //scheduleList.add(Pair(principalComponent, interestComponent))
+        remainingPrincipal -= principalComponent
+        scheduleList.add(Pair(principalComponent, interestComponent))
     }
 
     return scheduleList
 }
 
+// Function to calculate total principal and interest components
 fun calculateTotalComponents(schedule: List<Pair<Double, Double>>): Pair<Double, Double> {
     var totalPrincipalComponent = 0.0
     var totalInterestComponent = 0.0

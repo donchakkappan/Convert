@@ -34,10 +34,6 @@ class PieChartDataModel {
         PieChartData.Slice(
           randomLength(),
           randomColor()
-        ),
-        PieChartData.Slice(
-          randomLength(),
-          randomColor()
         )
       )
     )
