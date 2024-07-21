@@ -9,7 +9,7 @@
         android:icon="@drawable/ic_emi"
         android:title="@string/emi" />
     <item
-        android:id="@+id/nav_graph_units"
-        android:icon="@drawable/ic_units"
-        android:title="@string/units" />
+        android:id="@+id/nav_graph_scanner"
+        android:icon="@drawable/ic_scanner"
+        android:title="@string/scanner" />
 </menu>

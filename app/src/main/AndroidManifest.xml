@@ -21,6 +21,10 @@
             android:name="firebase_performance_logcat_enabled"
             android:value="true" />
 
+        <meta-data
+            android:name="com.google.mlkit.vision.DEPENDENCIES"
+            android:value="barcode_ui"/>
+
         <activity
             android:name=".NavHostActivity"
             android:exported="true"
@@ -31,7 +35,13 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+
         </activity>
+
     </application>
 
 </manifest>

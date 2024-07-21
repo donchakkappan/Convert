@@ -27,6 +27,7 @@ dependencies {
 
     api(libs.bundles.navigation)
 
+    api("com.google.android.gms:play-services-code-scanner:16.0.0-beta3")
 
     api(libs.kotlin)
     //api(libs.playCore)

@@ -23,9 +23,9 @@
         app:moduleName="feature_emi" />
 
     <include-dynamic
-        android:id="@+id/nav_graph_units"
-        app:graphPackage="com.allutils.convert.feature_units"
-        app:graphResName="nav_graph_units"
-        app:moduleName="feature_units" />
+        android:id="@+id/nav_graph_scanner"
+        app:graphPackage="com.allutils.convert.feature_scanner"
+        app:graphResName="nav_graph_scanner"
+        app:moduleName="feature_scanner" />
 
 </navigation>
